@@ -18,6 +18,8 @@ public class SetClient {
 	   private JPanel controlPanel;
 	   private JLabel nameLabel;
 	   private JLabel passwordLabel;
+	   private JLabel createGameLabel;
+	   private JLabel joinGameLabel;
 	   private Socket socket;
 	   private String statusText;
 	   
@@ -100,7 +102,12 @@ public class SetClient {
 				   message = "GAMES";
 				   break;
 			   case "CREATE":
-				   message = "CREATE";
+				   if(param1 == ""){
+					   message = "CREATE";
+				   }
+				   else{
+					   message = "CREATE " + param1;
+				   }
 				   break;
 			   case "LEAVE":
 				   message = "LEAVE";
@@ -233,12 +240,15 @@ public class SetClient {
 
 	      nameLabel = new JLabel("User ID: ", JLabel.RIGHT);
 	      passwordLabel = new JLabel("Password: ", JLabel.CENTER);
+	      createGameLabel = new JLabel("Game Capacity: ", JLabel.CENTER);
+	      joinGameLabel = new JLabel("Game Id: ", JLabel.CENTER);
 	      final JTextField userText = new JTextField(6);
-	      final JPasswordField passwordText = new JPasswordField(6);      
+	      final JPasswordField passwordText = new JPasswordField(6);
+	      final JTextField gameCapacity = new JTextField(6);
+	      final JTextField gameId = new JTextField(6);
 
 	      JButton loginButton = new JButton("Login");
 	      JButton logoutButton = new JButton("Logout");
-	      JButton registerButton = new JButton("Register");
 	      JButton whoAmIButton = new JButton("Who Am I");
 	      
 	      JButton gamesButton = new JButton("Games");
@@ -255,7 +265,7 @@ public class SetClient {
 	      JButton endGameButton = new JButton("End Game");
 	      JButton voteNoMoreSetButton = new JButton("Vote No More Set");
 	      
-	      JButton byeByeButton = new JButton("Cya!");
+	      JButton byeByeButton = new JButton("Terminate Connection");
 
 	      loginButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {     
@@ -265,14 +275,6 @@ public class SetClient {
 	            updateStatusLabel();        
 	         }
 	      });
-	      registerButton.addActionListener(new ActionListener() {
-	         public void actionPerformed(ActionEvent e) {     
-	        	String username = userText.getText();
-	        	String password = passwordText.getText();
-	            sendServerMessage("REGISTER", username, password, "");
-	            updateStatusLabel();        
-	         }
-		      }); 
 	      logoutButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {     
 	        	 logOut();
@@ -292,8 +294,9 @@ public class SetClient {
 	         }
 	      }); 
 	      createGameButton.addActionListener(new ActionListener() {
-		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("CREATE","", "", "");
+		         public void actionPerformed(ActionEvent e) {
+		        	 String gameCap = gameCapacity.getText();
+		        	 sendServerMessage("CREATE", gameCap, "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
@@ -304,8 +307,9 @@ public class SetClient {
 		         }
 		      }); 
 	      joinGameButton.addActionListener(new ActionListener() {
-		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+		         public void actionPerformed(ActionEvent e) {
+		        	 String game_id = gameId.getText();
+		        	 sendServerMessage("JOIN", game_id, "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
@@ -315,48 +319,46 @@ public class SetClient {
 		        	 updateStatusLabel();
 		         }
 		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
+	      startGameButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+		        	 sendServerMessage("START","", "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
+	      listGamesButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+		        	 sendServerMessage("LIST","", "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
+	      boardButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+		        	 sendServerMessage("BOARD","", "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
-		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+	      setButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 String card1 = "1";
+		        	 String card2 = "2";
+		        	 String card3 = "3";
+		        	 sendServerMessage("SET", card1, card2, card3);
 		        	 updateStatusLabel();
 		         }
 		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
+	      scoreButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+		        	 sendServerMessage("SCORE","", "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
+	      byeByeButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
+		        	 sendServerMessage("BYEBYE","", "", "");
 		        	 updateStatusLabel();
 		         }
-		      }); 
-	      gamesButton.addActionListener(new ActionListener() {
-		         public void actionPerformed(ActionEvent e) {     
-		        	 sendServerMessage("GAMES","", "", "");
-		        	 updateStatusLabel();
-		         }
-		      }); 
+		      });  
+
 	      controlPanel.add(nameLabel);
 	      controlPanel.add(userText);
 	      controlPanel.add(passwordLabel);       
@@ -364,13 +366,16 @@ public class SetClient {
 	      
 	      controlPanel.add(loginButton);
 	      controlPanel.add(logoutButton);
-	      controlPanel.add(registerButton);
 	      controlPanel.add(whoAmIButton);
 	      
 	      controlPanel.add(gamesButton);
 	      controlPanel.add(createGameButton);
+	      controlPanel.add(createGameLabel);       
+	      controlPanel.add(gameCapacity);
 	      controlPanel.add(leaveGameButton);
 	      controlPanel.add(joinGameButton);
+	      controlPanel.add(joinGameLabel);
+	      controlPanel.add(gameId);
 	      controlPanel.add(startGameButton);
 	      controlPanel.add(listGamesButton);
 	      controlPanel.add(messageUserButton);
