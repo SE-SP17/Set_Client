@@ -37,8 +37,9 @@ public class SetClient {
 	   }
 	   private boolean establishSocket(String address, Integer port){
 		   try{
-			   	 System.out.println("Connecting to " + address + " on port " + port);
-		         socket = new Socket(address, port);
+			   statusText = "Connecting to " + address + " on port " + port;
+//			   updateStatusLabel();
+		       socket = new Socket(address, port);
 		   }
 		   catch(Exception e){
 			   System.out.println("error establishSocket");
@@ -81,16 +82,58 @@ public class SetClient {
 			   OutputStream os = socket.getOutputStream();
 			   OutputStreamWriter osw = new OutputStreamWriter(os);
 	           BufferedWriter bw = new BufferedWriter(osw);
-	           
+	           System.out.println("Command Entered: " + action);
 	           switch(action){
 			   case "LOGIN":
 				   message = "LOGIN " + param1 + " " + param2;
+				   break;
+			   case "REGISTER":
+				   message = "REGISTER " + param1 + " " + param2;
 				   break;
 			   case "LOGOUT":
 				   message = "LOGOUT";
 				   break;
 			   case "WHOAMI":
 				   message = "WHOAMI";
+				   break;
+			   case "GAMES":
+				   message = "GAMES";
+				   break;
+			   case "CREATE":
+				   message = "CREATE";
+				   break;
+			   case "LEAVE":
+				   message = "LEAVE";
+				   break;
+			   case "JOIN":
+				   message = "JOIN " + param1;
+				   break;
+			   case "START":
+				   message = "START";
+				   break;
+			   case "LIST":
+				   message = "LIST";
+				   break;
+			   case "MSG":
+				   message = "MSG " + param1 + " " + param2;
+				   break;
+			   case "BOARD":
+				   message = "BOARD";
+				   break;
+			   case "SET":
+				   message = "SET " + param1 + " " + param2 + " " + param3;
+				   break;
+			   case "SCORE":
+				   message = "SCORE";
+				   break;
+			   case "END":
+				   message = "END";
+				   break;
+			   case "NOMORE":
+				   message = "NOMORE";
+				   break;
+			   case "BYEBYE":
+				   message = "BYEBYE";
 				   break;
 			   default:
 				   System.out.println("Doing default, so nothing");
@@ -115,6 +158,48 @@ public class SetClient {
 			   case "LOGOUT":
 				   statusText = readMessage;
 				   break;
+			   case "REGISTER":
+				   statusText = readMessage;
+				   break;
+			   case "GAMES":
+				   statusText = readMessage;
+				   break;
+			   case "CREATE":
+				   statusText = readMessage;
+				   break;
+			   case "LEAVE":
+				   statusText = readMessage;
+				   break;
+			   case "JOIN":
+				   statusText = readMessage;
+				   break;
+			   case "START":
+				   statusText = readMessage;
+				   break;
+			   case "LIST":
+				   statusText = readMessage;
+				   break;
+			   case "MSG":
+				   statusText = readMessage;
+				   break;
+			   case "BOARD":
+				   statusText = readMessage;
+				   break;
+			   case "SET":
+				   statusText = readMessage;
+				   break;
+			   case "SCORE":
+				   statusText = readMessage;
+				   break;
+			   case "END":
+				   statusText = readMessage;
+				   break;
+			   case "NOMORE":
+				   statusText = readMessage;
+				   break;
+			   case "BYEBYE":
+				   statusText = readMessage;
+				   break;
 			   case "WHOAMI":
 				   statusText = readMessage;
 				   break;
@@ -123,7 +208,6 @@ public class SetClient {
 				break;
 			   }
                System.out.println("Message received from the server : " +readMessage);
-//            socket.close();
 		   }
 		   catch(Exception e)
 		   {
@@ -133,15 +217,12 @@ public class SetClient {
 	   }
 	   private void logIn(String username, String password){
 		   sendServerMessage("LOGIN", username, password, "");
-		   System.out.println("done logIn");
 	   }
 	   private void logOut(){
 		   sendServerMessage("LOGOUT", "", "", "");
-		   System.out.println("done logout");
 	   }
 	   private void whoAmI(){
 		   sendServerMessage("WHOAMI", "", "", "");
-		   System.out.println("done whoAmI");
 	   }
 	   private void updateStatusLabel(){
 		   statusLabel.setText(statusText);
@@ -157,7 +238,25 @@ public class SetClient {
 
 	      JButton loginButton = new JButton("Login");
 	      JButton logoutButton = new JButton("Logout");
+	      JButton registerButton = new JButton("Register");
 	      JButton whoAmIButton = new JButton("Who Am I");
+	      
+	      JButton gamesButton = new JButton("Games");
+	      JButton createGameButton = new JButton("Create Game");
+	      JButton leaveGameButton = new JButton("Leave Game");
+	      JButton joinGameButton = new JButton("Join Game");
+	      JButton startGameButton = new JButton("Start Game");
+	      JButton listGamesButton = new JButton("List Games");
+	      JButton messageUserButton = new JButton("Message User");
+	      
+	      JButton boardButton = new JButton("Show Board");
+	      JButton setButton = new JButton("Call Set");
+	      JButton scoreButton = new JButton("Show Current Score");
+	      JButton endGameButton = new JButton("End Game");
+	      JButton voteNoMoreSetButton = new JButton("Vote No More Set");
+	      
+	      JButton byeByeButton = new JButton("Cya!");
+
 	      loginButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {     
 	        	String username = userText.getText();
@@ -165,7 +264,15 @@ public class SetClient {
 	            logIn(username, password);
 	            updateStatusLabel();        
 	         }
-	      }); 
+	      });
+	      registerButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	String username = userText.getText();
+		        	String password = passwordText.getText();
+		            sendServerMessage("REGISTER", username, password, "");
+		            updateStatusLabel();        
+		         }
+		      }); 
 	      logoutButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {     
 	        	 logOut();
@@ -178,13 +285,39 @@ public class SetClient {
 		        	 updateStatusLabel();
 		         }
 		      }); 
+
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
 	      controlPanel.add(nameLabel);
 	      controlPanel.add(userText);
 	      controlPanel.add(passwordLabel);       
 	      controlPanel.add(passwordText);
+	      
 	      controlPanel.add(loginButton);
 	      controlPanel.add(logoutButton);
+	      controlPanel.add(registerButton);
 	      controlPanel.add(whoAmIButton);
+	      
+	      controlPanel.add(gamesButton);
+	      controlPanel.add(createGameButton);
+	      controlPanel.add(leaveGameButton);
+	      controlPanel.add(joinGameButton);
+	      controlPanel.add(startGameButton);
+	      controlPanel.add(listGamesButton);
+	      controlPanel.add(messageUserButton);
+	      
+	      controlPanel.add(boardButton);
+	      controlPanel.add(setButton);
+	      controlPanel.add(scoreButton);
+	      controlPanel.add(endGameButton);
+	      controlPanel.add(voteNoMoreSetButton);
+	      
+	      controlPanel.add(byeByeButton);
+	      
 	      mainFrame.setVisible(true);
 	   }
 	
