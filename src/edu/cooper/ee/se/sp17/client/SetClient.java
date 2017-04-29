@@ -266,12 +266,12 @@ public class SetClient {
 	         }
 	      });
 	      registerButton.addActionListener(new ActionListener() {
-		         public void actionPerformed(ActionEvent e) {     
-		        	String username = userText.getText();
-		        	String password = passwordText.getText();
-		            sendServerMessage("REGISTER", username, password, "");
-		            updateStatusLabel();        
-		         }
+	         public void actionPerformed(ActionEvent e) {     
+	        	String username = userText.getText();
+	        	String password = passwordText.getText();
+	            sendServerMessage("REGISTER", username, password, "");
+	            updateStatusLabel();        
+	         }
 		      }); 
 	      logoutButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {     
@@ -280,12 +280,77 @@ public class SetClient {
 	         }
 	      }); 
 	      whoAmIButton.addActionListener(new ActionListener() {
+	         public void actionPerformed(ActionEvent e) {     
+	        	 whoAmI();
+	        	 updateStatusLabel();
+	         }
+	      });
+	      gamesButton.addActionListener(new ActionListener() {
+	         public void actionPerformed(ActionEvent e) {     
+	        	 sendServerMessage("GAMES","", "", "");
+	        	 updateStatusLabel();
+	         }
+	      }); 
+	      createGameButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
-		        	 whoAmI();
+		        	 sendServerMessage("CREATE","", "", "");
 		        	 updateStatusLabel();
 		         }
 		      }); 
-
+	      leaveGameButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("LEAVE","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      joinGameButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
+	      gamesButton.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {     
+		        	 sendServerMessage("GAMES","", "", "");
+		        	 updateStatusLabel();
+		         }
+		      }); 
 	      gamesButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {     
 		        	 sendServerMessage("GAMES","", "", "");
