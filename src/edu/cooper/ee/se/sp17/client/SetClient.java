@@ -1,4 +1,5 @@
 package edu.cooper.ee.se.sp17.client;
+import javax.imageio.*;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
@@ -7,24 +8,45 @@ import javax.swing.*;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class SetClient {
 
 	   private JFrame mainFrame;
 	   private JLabel headerLabel;
 	   private JLabel statusLabel;
+	   
+	   private JPanel loginPanel;
+	   private JPanel gamePanel;
+	   private JPanel boardPanel;
 	   private JPanel controlPanel;
+
 	   private JLabel nameLabel;
 	   private JLabel passwordLabel;
 	   private JLabel createGameLabel;
 	   private JLabel joinGameLabel;
 	   private Socket socket;
 	   private String statusText;
+	   private String[] setCards = {"0", "1", "2"};
 	   
+	   private boolean showControlPanel = true;
+	   private boolean showLoginPanel = true;
+	   private boolean showGamePanel = false;
+	   private boolean showBoardPanel = false;
 	   
+   	  JButton card0button;
+      JButton card1button;
+      JButton card2button;
+      JButton card3button;
+      JButton card4button;
+      JButton card5button;
+      JButton card6button;
+      JButton card7button;
+      JButton card8button;
+      JButton card9button;
+      JButton card10button;
+      JButton card11button;
+
 	   public SetClient(){
 	      try{
 	    	  if(establishSocket("localhost", 6666)){
@@ -57,24 +79,34 @@ public class SetClient {
 	   }
 	   private void prepareGUI(){
 	      mainFrame = new JFrame("");
-	      mainFrame.setSize(400,400);
-	      mainFrame.setLayout(new GridLayout(3, 1));
+	      mainFrame.setSize(1000,1000);
+	      mainFrame.setLayout(new GridLayout(1, 3));
 	      
 	      mainFrame.addWindowListener(new WindowAdapter() {
 	         public void windowClosing(WindowEvent windowEvent){
 	            System.exit(0);
 	         }        
 	      });    
-	      headerLabel = new JLabel("", JLabel.CENTER);        
-	      statusLabel = new JLabel("",JLabel.CENTER);    
+//	      headerLabel = new JLabel("", JLabel.LEFT);        
+	      statusLabel = new JLabel("",JLabel.LEFT);    
 	      statusLabel.setSize(350,100);
 
 	      controlPanel = new JPanel();
 	      controlPanel.setLayout(new FlowLayout());
+	      loginPanel = new JPanel();
+	      loginPanel.setLayout(new GridLayout(4,2));
+	      gamePanel = new JPanel();
+	      gamePanel.setLayout(new GridLayout(8,2));
+	      boardPanel = new JPanel();
+	      boardPanel.setLayout(new GridLayout(4,4,3,3));
 
-	      mainFrame.add(headerLabel);
+//	      mainFrame.add(headerLabel);
 	      mainFrame.add(controlPanel);
+	      mainFrame.add(loginPanel);
+	      mainFrame.add(gamePanel);
+	      mainFrame.add(boardPanel);
 	      mainFrame.add(statusLabel);
+//	      mainFrame.pack();
 	      mainFrame.setVisible(true);  
 	   }
 	   
@@ -185,26 +217,98 @@ public class SetClient {
 				   statusText = readMessage;
 				   break;
 			   case "LIST":
+				   
 				   statusText = readMessage;
 				   break;
 			   case "MSG":
 				   statusText = readMessage;
 				   break;
 			   case "BOARD":
+				   	String[] shape = {"a", "b", "c"};
+					String[] color = {"blue", "green", "pink"};
+					String[] fill = {"", "fill", "lines"};
+					String[] amount = {"1", "2", "3"};
+					try{
 				   for(int i=0;i<12;i++){
 					   readMessage = readMessage.replaceAll("[^0-9]+", " ");
 					   String[] cardProperties = readMessage.trim().split(" ");
+					   String imagePath = "";
+					   System.out.println("Card: " + cardProperties[0]);
 					   for(int j=0;j<cardProperties.length; j++){
-						   if(i == 11 && cardProperties[0] != "11"){
-							   readMessage = "Invalid board";
+						   if(j == 1){ // color
+							   imagePath += shape[Integer.parseInt(cardProperties[1])-1];
+						   }
+						   else if(j == 2){ // shape
+							   imagePath += color[Integer.parseInt(cardProperties[2])-1];
+						   }
+						   else if(j == 3){ // fill
+							   imagePath += fill[Integer.parseInt(cardProperties[3])-1];
+						   }
+						   else if(j == 4){ // amount
+							   imagePath += amount[Integer.parseInt(cardProperties[4])-1];	
 						   }
 					   }
-					   System.out.println("done" + i);
+					   imagePath += ".png";
+					   File f = new File("cards/" + imagePath);
+					   if(!(f.exists() && !f.isDirectory())) { 
+						   statusText = "Board Generation Failure";
+						   return;
+					   }
+					   Image img = ImageIO.read(getClass().getResource("cards/" + imagePath));
+					   if(i == 0){
+				    	   card0button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 1){
+						   card1button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 2){
+						   card2button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 3){
+						   card3button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 4){
+						   card4button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 5){
+						   card5button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 6){
+						   card6button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 7){
+						   card7button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 8){
+						   card8button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 9){
+						   card9button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 10){
+						   card10button.setIcon(new ImageIcon(img));
+					   }
+					   else if(i == 11){
+						   card11button.setIcon(new ImageIcon(img));
+					   }
+					   System.out.println("path:" + imagePath);
 					   
 					   statusText += readMessage + " ";
-					   readMessage = br.readLine();
+					   if(i != 11){
+						   readMessage = br.readLine();
+					   }
 					   System.out.println(readMessage);
 				   }
+				   		System.out.println("gothere1");
+					   boardPanel.revalidate();
+					   System.out.println("gothere2");
+					   boardPanel.repaint();
+					   System.out.println("gothere3");
+					   statusText = "Board Loaded";
+					}
+					catch(Exception e){
+						System.out.println(e);
+					}
 				   break;
 			   case "SET":
 				   statusText = readMessage;
@@ -248,11 +352,16 @@ public class SetClient {
 	   private void updateStatusLabel(){
 		   statusLabel.setText(statusText);
 	   }
+	   private void addClickedCardToSetCall(String cardNumber){
+		   setCards[0] = setCards[1];
+		   setCards[1] = setCards[2];
+		   setCards[2] = cardNumber;
+	   }
 	   private void showLogin(){
 		  sendServerMessage("ServerStart", "", "", "");
-	      headerLabel.setText("Swing SET GUI"); 
+//	      headerLabel.setText("Swing SET GUI"); 
 
-	      nameLabel = new JLabel("User ID: ", JLabel.RIGHT);
+	      nameLabel = new JLabel("User ID: ", JLabel.CENTER);
 	      passwordLabel = new JLabel("Password: ", JLabel.CENTER);
 	      createGameLabel = new JLabel("Game Capacity: ", JLabel.CENTER);
 	      joinGameLabel = new JLabel("Game Id: ", JLabel.CENTER);
@@ -280,7 +389,77 @@ public class SetClient {
 	      JButton voteNoMoreSetButton = new JButton("Vote No More Set");
 	      
 	      JButton byeByeButton = new JButton("Terminate Connection");
+	      
+	      card0button = new JButton("0");
+	      card1button = new JButton("1");
+	      card2button = new JButton("2");
+	      card3button = new JButton("3");
+	      card4button = new JButton("4");
+	      card5button = new JButton("5");
+	      card6button = new JButton("6");
+	      card7button = new JButton("7");
+	      card8button = new JButton("8");
+	      card9button = new JButton("9");
+	      card10button = new JButton("10");
+	      card11button = new JButton("11");
 
+	      try {
+	    	    Image img1 = ImageIO.read(getClass().getResource("cards/abluefill1.png"));
+	    	    Image img2 = ImageIO.read(getClass().getResource("cards/abluefill2.png"));
+	    	    Image img3 = ImageIO.read(getClass().getResource("cards/abluefill3.png"));
+	    	    
+	    	    card0button.setIcon(new ImageIcon(img1));
+	    	    card0button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card0button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card1button.setIcon(new ImageIcon(img2));
+	    	    card1button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card1button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card2button.setIcon(new ImageIcon(img3));
+	    	    card2button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card2button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card3button.setIcon(new ImageIcon(img1));
+	    	    card3button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card3button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card4button.setIcon(new ImageIcon(img2));
+	    	    card4button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card4button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card5button.setIcon(new ImageIcon(img3));
+	    	    card5button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card5button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card6button.setIcon(new ImageIcon(img1));
+	    	    card6button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card6button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card7button.setIcon(new ImageIcon(img2));
+	    	    card7button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card7button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card8button.setIcon(new ImageIcon(img3));
+	    	    card8button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card8button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card9button.setIcon(new ImageIcon(img3));
+	    	    card9button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card9button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card10button.setIcon(new ImageIcon(img3));
+	    	    card10button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card10button.setPreferredSize(new Dimension(183,279));
+	    	    
+	    	    card11button.setIcon(new ImageIcon(img3));
+	    	    card11button.setMargin(new Insets(0, 0, 0, 0));
+	    	    card11button.setPreferredSize(new Dimension(183,279));
+	     } 
+	      catch (Exception ex) {
+	    	    System.out.println(ex);
+	      }
+	      
 	      loginButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {     
 	        	String username = userText.getText();
@@ -353,10 +532,7 @@ public class SetClient {
 		      }); 
 	      setButton.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {
-		        	 String card1 = "1";
-		        	 String card2 = "2";
-		        	 String card3 = "3";
-		        	 sendServerMessage("SET", card1, card2, card3);
+		        	 sendServerMessage("SET", setCards[0], setCards[1], setCards[2]);
 		        	 updateStatusLabel();
 		         }
 		      }); 
@@ -372,37 +548,127 @@ public class SetClient {
 		        	 updateStatusLabel();
 		         }
 		      });  
+	      card0button.addActionListener(new ActionListener() {
+	         public void actionPerformed(ActionEvent e) {
+	        	 addClickedCardToSetCall("0");
+	        	 updateStatusLabel();
+	         }
+	      });
+	      card1button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("1");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card2button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("2");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card3button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("3");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card4button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("4");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card5button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("5");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card6button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("6");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card7button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("7");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card8button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("8");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card9button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("9");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card10button.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 addClickedCardToSetCall("10");
+		        	 updateStatusLabel();
+		         }
+		      });
+	      card11button.addActionListener(new ActionListener() {
+	         public void actionPerformed(ActionEvent e) {
+	        	 addClickedCardToSetCall("11");
+	        	 updateStatusLabel();
+	         }
+	      });
 
-	      controlPanel.add(nameLabel);
-	      controlPanel.add(userText);
-	      controlPanel.add(passwordLabel);       
-	      controlPanel.add(passwordText);
+	      loginPanel.add(nameLabel);
+	      loginPanel.add(userText);
+	      loginPanel.add(passwordLabel);       
+	      loginPanel.add(passwordText);
 	      
-	      controlPanel.add(loginButton);
-	      controlPanel.add(logoutButton);
-	      controlPanel.add(whoAmIButton);
+	      loginPanel.add(loginButton);
+	      loginPanel.add(logoutButton);
+	      loginPanel.add(whoAmIButton);
 	      
-	      controlPanel.add(gamesButton);
-	      controlPanel.add(createGameButton);
-	      controlPanel.add(createGameLabel);       
-	      controlPanel.add(gameCapacity);
-	      controlPanel.add(leaveGameButton);
-	      controlPanel.add(joinGameButton);
-	      controlPanel.add(joinGameLabel);
-	      controlPanel.add(gameId);
-	      controlPanel.add(startGameButton);
-	      controlPanel.add(listGamesButton);
-	      controlPanel.add(messageUserButton);
+	      gamePanel.add(gamesButton);
+	      gamePanel.add(createGameButton);
+	      gamePanel.add(createGameLabel);       
+	      gamePanel.add(gameCapacity);
+	      gamePanel.add(leaveGameButton);
+	      gamePanel.add(joinGameButton);
+	      gamePanel.add(joinGameLabel);
+	      gamePanel.add(gameId);
+	      gamePanel.add(startGameButton);
+	      gamePanel.add(listGamesButton);
+	      gamePanel.add(messageUserButton);
 	      
-	      controlPanel.add(boardButton);
-	      controlPanel.add(setButton);
-	      controlPanel.add(scoreButton);
-	      controlPanel.add(endGameButton);
-	      controlPanel.add(voteNoMoreSetButton);
+	      gamePanel.add(boardButton);
+	      gamePanel.add(setButton);
+	      gamePanel.add(scoreButton);
+	      gamePanel.add(endGameButton);
+	      gamePanel.add(voteNoMoreSetButton);
 	      
-	      controlPanel.add(byeByeButton);
+	      boardPanel.add(card0button);
+	      boardPanel.add(card1button);
+	      boardPanel.add(card2button);
+	      boardPanel.add(card3button);
+	      boardPanel.add(card4button);
+	      boardPanel.add(card5button);
+	      boardPanel.add(card6button);
+	      boardPanel.add(card7button);
+	      boardPanel.add(card8button);
+	      boardPanel.add(card9button);
+	      boardPanel.add(card10button);
+	      boardPanel.add(card11button);
+	      
+//	      controlPanel.add(byeByeButton);
 	      
 	      mainFrame.setVisible(true);
+	      loginPanel.setVisible(true);
+	      gamePanel.setVisible(true);
+	      boardPanel.setVisible(true);
+	      controlPanel.setVisible(true);
+	      
 	   }
 	
 }
