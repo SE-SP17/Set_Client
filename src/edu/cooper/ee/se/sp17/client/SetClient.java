@@ -8,7 +8,8 @@ import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SetClient {
 
@@ -26,7 +27,7 @@ public class SetClient {
 	   
 	   public SetClient(){
 	      try{
-	    	  if(establishSocket("199.98.20.117", 6666)){
+	    	  if(establishSocket("localhost", 6666)){
 	    		  prepareGUI();
 	    	  }
 	    	  else{
@@ -190,7 +191,20 @@ public class SetClient {
 				   statusText = readMessage;
 				   break;
 			   case "BOARD":
-				   statusText = readMessage;
+				   for(int i=0;i<12;i++){
+					   readMessage = readMessage.replaceAll("[^0-9]+", " ");
+					   String[] cardProperties = readMessage.trim().split(" ");
+					   for(int j=0;j<cardProperties.length; j++){
+						   if(i == 11 && cardProperties[0] != "11"){
+							   readMessage = "Invalid board";
+						   }
+					   }
+					   System.out.println("done" + i);
+					   
+					   statusText += readMessage + " ";
+					   readMessage = br.readLine();
+					   System.out.println(readMessage);
+				   }
 				   break;
 			   case "SET":
 				   statusText = readMessage;
@@ -212,7 +226,7 @@ public class SetClient {
 				   break;
 			   default:
 				   System.out.println("Doing default, so nothing");
-				break;
+				   break;
 			   }
                System.out.println("Message received from the server : " +readMessage);
 		   }
