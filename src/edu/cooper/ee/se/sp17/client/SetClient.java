@@ -34,6 +34,8 @@ public class SetClient {
 		}
 		System.out.println("Connected!");
 		
+		LoginFrame login = new LoginFrame("Set Game Client 0xFF");
+		
 		/** Testing **/
 		try {
 			System.out.println(s_in.readLine());
@@ -44,7 +46,6 @@ public class SetClient {
 	}
 	
 	public static void main(String[] args){
-		System.out.println("Starting SetClient...");
 		if(args.length < 3){
 			System.err.println("Not enough arguments provided.");
 			System.err.println("Defaulting to sable08.ee.cooper.edu:6666");
