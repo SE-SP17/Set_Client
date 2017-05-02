@@ -70,8 +70,11 @@ public class LoginFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String msg = SetClient.client.send(String.join(" ", "LOGIN", tf_user.getText(), 
 						String.valueOf(tf_pass.getPassword()), "\r\n"));
-				// TODO Compare and show next screen
-				//JOptionPane.showMessageDialog(contentPane, msg);
+				JOptionPane.showMessageDialog(contentPane, msg);
+				if(msg.equals("User logged in successfully")){
+					LobbyFrame lobby = new LobbyFrame("Set Game Client 0xFF");
+					close();
+				}
 			}
 		});
 
@@ -83,5 +86,10 @@ public class LoginFrame extends JFrame {
 				JOptionPane.showMessageDialog(contentPane, msg);
 			}
 		});
+	}
+	
+	public void close(){
+		setVisible(false);
+		dispose();
 	}
 }

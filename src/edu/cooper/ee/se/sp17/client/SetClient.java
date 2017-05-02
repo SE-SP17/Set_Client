@@ -33,14 +33,6 @@ public class SetClient {
 		System.out.println("Connected!");
 		
 		LoginFrame login = new LoginFrame("Set Game Client 0xFF");
-		
-		/** Testing **/
-		try {
-			System.out.println(s_in.readLine());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public static void main(String[] args){
