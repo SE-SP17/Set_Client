@@ -32,6 +32,14 @@ public class SetClient {
 		}
 		System.out.println("Connected!");
 		
+		try{
+			System.out.println("Server says " + s_in.readLine());
+		}catch(IOException e){
+			System.err.println("Cannot talk to server");
+			e.printStackTrace();
+			System.exit(-2);
+		}
+		
 		LoginFrame login = new LoginFrame("Set Game Client 0xFF");
 	}
 	
