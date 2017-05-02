@@ -3,13 +3,14 @@ package edu.cooper.ee.se.sp17.client;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -23,6 +24,7 @@ public class LoginFrame extends JFrame {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		// Add graphical elements
 		Container contentPane = getContentPane();
 		contentPane.setPreferredSize(new Dimension(450, 260));
 		
@@ -53,12 +55,33 @@ public class LoginFrame extends JFrame {
 		btn_login = new JButton("Login");
 		contentPane.add(btn_login);
 		layout.putConstraint(SpringLayout.NORTH, btn_login, 5, SpringLayout.SOUTH, tf_pass);
-		
 		layout.putConstraint(SpringLayout.WEST, btn_login, 5, SpringLayout.EAST, btn_reg);
+		
+		getRootPane().setDefaultButton(btn_login);
 		
 		pack();
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setVisible(true);
+		
+		// Attach listeners
+		btn_login.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String msg = SetClient.client.send(String.join(" ", "LOGIN", tf_user.getText(), 
+						String.valueOf(tf_pass.getPassword()), "\r\n"));
+				// TODO Compare and show next screen
+				//JOptionPane.showMessageDialog(contentPane, msg);
+			}
+		});
+
+		btn_reg.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String msg = SetClient.client.send(String.join(" ", "REGISTER", tf_user.getText(), 
+						String.valueOf(tf_pass.getPassword()), "\r\n"));
+				JOptionPane.showMessageDialog(contentPane, msg);
+			}
+		});
 	}
 }

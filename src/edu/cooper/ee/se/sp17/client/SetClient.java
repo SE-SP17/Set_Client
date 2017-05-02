@@ -1,12 +1,10 @@
 package edu.cooper.ee.se.sp17.client;
-import javax.imageio.*;
-import java.net.*;
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class SetClient {
 	
@@ -57,7 +55,15 @@ public class SetClient {
 	
 	/* TODO Send command to server and return output */
 	public String send(String cmd){
-		
-		return cmd;
+		String o = "";
+		try{
+			s_out.write(cmd.getBytes());
+			s_out.flush();
+			return s_in.readLine(); /* change this line depending on command */
+		}catch(IOException e){
+			System.err.println("Cannot talk to the server!");
+			System.exit(-2);
+		}
+		return o;
 	}
 }
