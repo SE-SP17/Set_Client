@@ -3,7 +3,9 @@ package edu.cooper.ee.se.sp17.client;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,8 +18,9 @@ import javax.swing.JPanel;
 
 public class GameFrame extends JFrame {
 	int gid;
-	JButton btn_leave, btn_start, btn_end, btn_nomore;
+	JButton btn_leave, btn_start, btn_end;
 	GamePanel gp;
+	JButton btn_nomore, btn_set;
 	
 	public GameFrame(String title, int gid) {
 		super(title);
@@ -25,24 +28,25 @@ public class GameFrame extends JFrame {
 		
 		Container contentPane = getContentPane();
 		setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-		JPanel menu = new JPanel(new FlowLayout());
-		menu.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-		contentPane.add(menu);
+		JPanel top_menu = new JPanel(new FlowLayout());
+		// top menu controls - control
+		top_menu.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		contentPane.add(top_menu);
 		
 		btn_leave = new JButton("LEAVE");
-		menu.add(btn_leave);
+		top_menu.add(btn_leave);
 		btn_start = new JButton("START");
-		menu.add(btn_start);
+		top_menu.add(btn_start);
 		btn_end = new JButton("END");
-		menu.add(btn_end);
-		btn_nomore = new JButton("NOMORE");
-		menu.add(btn_nomore);
+		top_menu.add(btn_end);
 		
+		
+		//game display
 		gp = new GamePanel();
 		gp.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 		contentPane.add(gp);
 		
-		//check if board returns anything
+		//check if board returns anything to see if game has started
 		String m = SetClient.client.send("BOARD\r\n");
 		if(m.equals("You're not playing a game")){
 			gp.setEnabled(false);
@@ -52,6 +56,21 @@ public class GameFrame extends JFrame {
 			gp.fillBoard();
 		}
 		System.out.println(m);
+		
+		JPanel bot_menu = new JPanel(new FlowLayout());
+		//bottom menu controls - gameplay
+		bot_menu.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		contentPane.add(bot_menu);
+		
+		btn_set = new JButton("SET");
+		bot_menu.add(btn_set);
+		btn_nomore = new JButton("NOMORE");
+		bot_menu.add(btn_nomore);
+		
+		//set screen size
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension pref = new Dimension((int)screenSize.getHeight()/3, (int)screenSize.getHeight()/2);
+		contentPane.setPreferredSize(pref);
 
 		pack();
 		setLocationRelativeTo(null);
