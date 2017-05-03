@@ -43,8 +43,7 @@ public class SetClient {
 			System.exit(-2);
 		}
 		
-//		login = new LoginFrame("Set Game Client 0xFF");
-		GameFrame g = new GameFrame("hello");
+		login = new LoginFrame("Set Game Client 0xFF");
 	}
 	
 	public static void main(String[] args){
