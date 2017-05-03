@@ -132,7 +132,7 @@ public class GameFrame extends JFrame {
 				//TODO display when other players call nomore, 
 				//update board with more cards when everyone calls it
 				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-				String next = SetClient.client.send("NOMORE\r\n");
+				String next = SetClient.client.send("");
 				if(next.startsWith("1") || next.startsWith("2") ){
 					SetClient.client.send(""); //flush out 
 					SetClient.client.send("");

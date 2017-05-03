@@ -112,16 +112,16 @@ public class GamePanel extends JPanel {
 		boardCards = new ArrayList<String>(Arrays.asList(m.split("\n")));
 		System.out.println("number of cards " + boardCards.size());
 
-		// add buttons if there are more than 12 cards
-		if (boardCards.size() - 1 > currentNumber) {
-			addCardButtons(boardCards.size() - 1 - 12);
-			
-		}
-		else if(boardCards.size() - 1 < currentNumber){
-			rows--;
-			layout.setRows(rows);
-		}
-		currentNumber = boardCards.size()-1;
+//		// add buttons if there are more than 12 cards
+//		if (boardCards.size() - 1 > currentNumber) {
+//			addCardButtons(boardCards.size() - 1 - 12);
+//			
+//		}
+//		else if(boardCards.size() - 1 < currentNumber){
+//			rows--;
+//			layout.setRows(rows);
+//		}
+//		currentNumber = boardCards.size()-1;
 
 		// parse card type into digits for accessing images
 		int[] type = new int[4];
