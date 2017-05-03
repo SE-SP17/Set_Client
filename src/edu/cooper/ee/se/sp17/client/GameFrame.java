@@ -102,16 +102,30 @@ public class GameFrame extends JFrame {
 		btn_set.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				//if()
-				
-				String m = SetClient.client.send("SET\r\n");
-				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-				if(m.equals("Game started!")){
-					System.out.println(m);
-					gp.setEnabled(true);
-					gp.fillBoard();
+				if(gp.selected == 3){
+					int[] select = gp.getSelectedCards();
+					
+					String m = SetClient.client.send("SET "+
+							select[0]+" "+
+							select[1]+" "+
+							select[2]+" "+
+							"\r\n");
+					JOptionPane.showMessageDialog(gp.getRootPane(), m);
+					if(m.startsWith("Cards ")){
+						gp.unselect(select);
+						
+					}
+					//TODO handle scoring, update board
 				}
+			}
+		});	
+		
+		btn_nomore.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String m = SetClient.client.send("NOMORE\r\n");
+				//TODO display when other players call nomore, 
+				//update board with more cards when everyone calls it
 			}
 		});	
 	}

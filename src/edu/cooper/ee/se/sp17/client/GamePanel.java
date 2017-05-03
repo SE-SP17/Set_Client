@@ -25,7 +25,6 @@ import javax.swing.ImageIcon;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 public class GamePanel extends JPanel {
-	//change to arraylist
 	private ArrayList<JToggleButton> cardButtons = new ArrayList<JToggleButton>();
 	private ArrayList<String> boardCards = new ArrayList<String>();
 	private ImageIcon[][][][] cardImages = new ImageIcon[4][4][4][4];
@@ -46,9 +45,6 @@ public class GamePanel extends JPanel {
 		System.out.println("hello");
 		loadImages();
 		createCards();
-
-		// // layout.setRows(rows--);
-		// // layout.setRows(rows++);
 
 		
 //		setVisible(true);
@@ -71,7 +67,7 @@ public class GamePanel extends JPanel {
 			}
 		}
 	}
-
+	//initial setup
 	public void createCards() {
 		
 		for (int i = 0; i < 12; i++) {
@@ -110,14 +106,17 @@ public class GamePanel extends JPanel {
 	
 	// fill board with current cards
 	public void fillBoard(){
+		//Get board from server
 		String m = SetClient.client.send("BOARD\r\n");
 		boardCards = new ArrayList<String>(Arrays.asList(m.split("\n")));
 		System.out.println("number of cards " +boardCards.size());
 		
+		// add buttons if there are more than 12 cards 
 		if(boardCards.size()-1 > 12){
 			addCardButtons(boardCards.size()-1-12);
 		}
 
+		//parse card type into digits for accessing images
 		int[] type = new int[4];
 		for (int i = 0; i < boardCards.size()-1; i++) {
 			System.out.println(boardCards.get(i));
@@ -133,8 +132,31 @@ public class GamePanel extends JPanel {
 			}
 		}
 	}
+	public int[] getSelectedCards(){
+		int i = 0;
+		int index = 0;
+		int[] selected = new int[3]; //return index of card
+		for(JToggleButton card : cardButtons){
+			if(card.isSelected()){
+				selected[i++] = Character.getNumericValue(boardCards.get(index).charAt(0));
+			}
+			index++;
+		}
+		return selected;
+	}
+	
 	public void addCardButtons(int numAdd){
-		//TODO
+		//TODO add card buttons when everyone calls nomore
+		// // layout.setRows(rows--);
+		// // layout.setRows(rows++);
+	}
+	
+	
+	//unselect all current card selections
+	public void unselect(int[] selected){
+		for(int i = 0; i < selected.length; i++){
+			cardButtons.get(selected[i]).setSelected(false);
+		}
 	}
 	
 	@Override
