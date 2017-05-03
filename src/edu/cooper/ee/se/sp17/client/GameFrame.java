@@ -1,6 +1,7 @@
 package edu.cooper.ee.se.sp17.client;
 
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,17 @@ public class GameFrame extends JFrame {
 		gp = new GamePanel();
 		gp.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 		contentPane.add(gp);
+		
+		//check if board returns anything
+		String m = SetClient.client.send("BOARD\r\n");
+		if(m.equals("You're not playing a game")){
+			gp.setEnabled(false);
+		}
+		else{
+			gp.setEnabled(true);
+			gp.fillBoard();
+		}
+		System.out.println(m);
 
 		pack();
 		setLocationRelativeTo(null);
@@ -55,6 +67,19 @@ public class GameFrame extends JFrame {
 				close();
 			}
 		});
+		btn_start.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				String m = SetClient.client.send("START\r\n");
+				JOptionPane.showMessageDialog(gp.getRootPane(), m);
+				if(m.equals("Game started!")){
+					System.out.println(m);
+					gp.setEnabled(true);
+					gp.fillBoard();
+				}
+			}
+		});	
 	}
 
 	public void close(){
