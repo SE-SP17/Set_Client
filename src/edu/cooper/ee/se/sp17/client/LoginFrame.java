@@ -72,7 +72,7 @@ public class LoginFrame extends JFrame {
 						String.valueOf(tf_pass.getPassword()), "\r\n"));
 				JOptionPane.showMessageDialog(contentPane, msg);
 				if(msg.equals("User logged in successfully")){
-					LobbyFrame lobby = new LobbyFrame("Set Game Client 0xFF");
+					LobbyFrame lobby = new LobbyFrame("Set Game Client 0xFF", SetClient.client.send("WHOAMI\r\n"));
 					close();
 				}
 			}

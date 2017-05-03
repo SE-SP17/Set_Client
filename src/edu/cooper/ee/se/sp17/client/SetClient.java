@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 public class SetClient {
 	
 	final static String HOST = "199.98.20.117";
@@ -15,6 +17,7 @@ public class SetClient {
 	private Socket server;
 	private BufferedReader s_in;
 	private DataOutputStream s_out;
+	private LoginFrame login;
 	
 	public SetClient(String host, int port){
 		System.out.println("Attempting to connect to the game server...");
@@ -40,7 +43,7 @@ public class SetClient {
 			System.exit(-2);
 		}
 		
-		LoginFrame login = new LoginFrame("Set Game Client 0xFF");
+		login = new LoginFrame("Set Game Client 0xFF");
 	}
 	
 	public static void main(String[] args){
@@ -53,17 +56,29 @@ public class SetClient {
 		}
 	}
 	
-	/* TODO Send command to server and return output */
 	public String send(String cmd){
-		String o = "";
 		try{
 			s_out.write(cmd.getBytes());
 			s_out.flush();
-			return s_in.readLine(); /* change this line depending on command */
+
+			// Add Board/Set/Etc
+			String o = s_in.readLine();
+			if(o.startsWith("From")){
+				JOptionPane.showMessageDialog(login.getRootPane(), o);
+				return s_in.readLine();
+			}else if(cmd.toUpperCase().startsWith("GAMES")){
+				String tmp = o;
+				while(!tmp.startsWith("--END--")){
+					tmp = s_in.readLine();
+					o += "\n" + tmp;
+				}
+				return o;
+			}
+			return o;
 		}catch(IOException e){
 			System.err.println("Cannot talk to the server!");
 			System.exit(-2);
 		}
-		return o;
+		return null;
 	}
 }
