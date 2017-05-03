@@ -69,12 +69,12 @@ public class GameFrame extends JFrame {
 		
 		//set screen size
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension pref = new Dimension((int)screenSize.getHeight()/3, (int)screenSize.getHeight()/2);
+		Dimension pref = new Dimension((int)screenSize.getHeight()/2, (int)screenSize.getHeight()/4*3);
 		contentPane.setPreferredSize(pref);
 
 		pack();
 		setLocationRelativeTo(null);
-		setResizable(false);
+		setResizable(true);
 		setVisible(true);
 		
 		btn_leave.addActionListener(new ActionListener(){
@@ -113,6 +113,11 @@ public class GameFrame extends JFrame {
 					JOptionPane.showMessageDialog(gp.getRootPane(), m);
 					if(m.startsWith("Cards ")){
 						gp.unselect(select);
+						
+					}
+					if(m.startsWith("Player ")){
+						gp.unselect(select);
+						gp.fillBoard();
 						
 					}
 					//TODO handle scoring, update board
