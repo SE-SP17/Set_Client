@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 public class SetClient {
 	
 	final static String HOST = "199.98.20.117";
-	//final static String HOST = "localhost";
+//	final static String HOST = "localhost";
 	final static int PORT = 6666;
 	
 	public static SetClient client;

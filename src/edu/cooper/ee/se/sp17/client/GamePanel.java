@@ -118,8 +118,24 @@ public class GamePanel extends JPanel {
 			
 		}
 		else if(boardCards.size() - 1 < currentNumber){
+			
 			rows--;
 			layout.setRows(rows);
+			layout.setColumns(cols);
+			System.out.println("rows " + rows);
+			System.out.println("cols " + cols);
+			
+			this.remove( cardButtons.get(cardButtons.size()-1) );
+			 cardButtons.remove( cardButtons.size()-1);
+			
+			this.remove( cardButtons.get(cardButtons.size()-1));
+			 cardButtons.remove( cardButtons.size()-1);
+			
+			this.remove( cardButtons.get(cardButtons.size()-1));
+			 cardButtons.remove( cardButtons.size()-1);
+			this.revalidate();
+			this.repaint();
+			
 		}
 		currentNumber = boardCards.size()-1;
 
@@ -148,7 +164,12 @@ public class GamePanel extends JPanel {
 		int[] selected = new int[3]; // return index of card
 		for (JToggleButton card : cardButtons) {
 			if (card.isSelected()) {
-				selected[i++] = Character.getNumericValue(boardCards.get(index).charAt(0));
+				if(boardCards.get(index).charAt(1) == ':'){
+					selected[i++] = Integer.parseInt(boardCards.get(index).substring(0,1));
+				}
+				else {
+					selected[i++] = Integer.parseInt(boardCards.get(index).substring(0,2));
+				}
 			}
 			index++;
 		}
