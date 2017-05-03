@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 
@@ -24,8 +26,8 @@ import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 public class GamePanel extends JPanel {
 	//change to arraylist
-	private JToggleButton[] cards = new JToggleButton[12];
-	String[] board = new String[12];
+	private ArrayList<JToggleButton> cardButtons = new ArrayList<JToggleButton>();
+	private ArrayList<String> boardCards = new ArrayList<String>();
 	private ImageIcon[][][][] cardImages = new ImageIcon[4][4][4][4];
 	int rows = 4;
 	int cols = 3;
@@ -72,11 +74,11 @@ public class GamePanel extends JPanel {
 
 	public void createCards() {
 		
-		for (int i = 0; i < cards.length; i++) {
+		for (int i = 0; i < 12; i++) {
 
 			// create button with correct ImageIcon
-			cards[i] = new JToggleButton();
-			cards[i].setUI(new MetalToggleButtonUI() {
+			cardButtons.add(new JToggleButton());
+			cardButtons.get(i).setUI(new MetalToggleButtonUI() {
 				@Override
 				protected Color getSelectColor() {
 					return Color.CYAN;
@@ -84,7 +86,7 @@ public class GamePanel extends JPanel {
 			});
 
 			// Attach listeners
-			cards[i].addItemListener(new ItemListener() {
+			cardButtons.get(i).addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent ev) {
 					if (ev.getStateChange() == ItemEvent.SELECTED) {
 						if (selected > 3) {
@@ -93,7 +95,6 @@ public class GamePanel extends JPanel {
 							if(!clicked.isSelected()){
 								clicked.doClick();
 							}
-							
 						}
 						else{
 							selected++;
@@ -105,36 +106,39 @@ public class GamePanel extends JPanel {
 				}
 			});
 
-			this.add(cards[i]);
+			this.add(cardButtons.get(i));
 		}
 	}
 	
 	// fill board with current cards
 	public void fillBoard(){
 		String m = SetClient.client.send("BOARD\r\n");
-		board = m.split("\n");
-		System.out.println("number of cards " +board.length);
+		boardCards = new ArrayList<String>(Arrays.asList(m.split("\n")));
+		System.out.println("number of cards " +boardCards.size());
 		
-				
-//		board = new String[] {  "1111", "2222", "3333", "1232", 
-//								"1312", "3212", "3211", "2311", 
-//								"1232", "1222", "1333", "1223" };
-		
+		if(boardCards.size()-1 > 12){
+			addCardButtons(boardCards.size()-1-12);
+		}
+
 		int[] type = new int[4];
-		for (int i = 0; i < board.length; i++) {
-			System.out.println(board[i]);
-			int index = board[i].indexOf(":");
+		for (int i = 0; i < boardCards.size()-1; i++) {
+			System.out.println(boardCards.get(i));
+			int index = boardCards.get(i).indexOf(":");
 			if(index > -1){
 				for (int k = 0; k < 4; k++) {
-					char c = board[i].charAt(index + (k+1)*2); //location of digit
+					char c = boardCards.get(i).charAt(index + (k+1)*2); //location of digit
 					System.out.println(c);
 					type[k] = Character.getNumericValue(c);
 				}
 				// create button with correct ImageIcon
-				cards[i].setIcon(cardImages[type[0]] [type[1]] [type[2]] [type[3]]);
+				cardButtons.get(i).setIcon(cardImages[type[0]] [type[1]] [type[2]] [type[3]]);
 			}
 		}
 	}
+	public void addCardButtons(int numAdd){
+		//TODO
+	}
+	
 	@Override
 	public void setEnabled(boolean enabled) {
 		System.out.println("enabled: " + enabled);
