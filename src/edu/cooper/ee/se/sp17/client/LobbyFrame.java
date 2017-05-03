@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,7 +37,6 @@ public class LobbyFrame extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 
 		JLabel logo = new JLabel(new ImageIcon("res/logo.png"));
-		//logo.setPreferredSize(new Dimension(107, 54));
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 3;
@@ -44,7 +44,7 @@ public class LobbyFrame extends JFrame {
 		panel.add(logo);
 
 		JLabel lbl_welcome = new JLabel(msg);
-		lbl_welcome.setFont(new Font("Arial", Font.PLAIN, 14));
+		lbl_welcome.setFont(new Font("Calibri", Font.PLAIN, 16));
 		lbl_welcome.setHorizontalAlignment(SwingConstants.LEFT);
 		c.gridx = 0;
 		c.gridy = 1;
@@ -59,14 +59,18 @@ public class LobbyFrame extends JFrame {
 		layout.setConstraints(btn_logout, c);
 		panel.add(btn_logout);
 
-		glp = new GameListPane();
-		glp.refresh();
+		JPanel out = new JPanel();
+		out.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
 		c.gridheight = 10;
-		layout.setConstraints(glp, c);
-		panel.add(glp);
+		layout.setConstraints(out, c);
+		panel.add(out);
+
+		glp = new GameListPane(this);
+		glp.refresh();
+		out.add(glp);
 
 		btn_create =  new JButton("Create");
 		c.gridx = 0;
@@ -109,10 +113,22 @@ public class LobbyFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String m = JOptionPane.showInputDialog("Max users:");
-				if(m == null) return;
+				if(m == null || m.equals("")) return;
+				
 				int max = Integer.parseInt(m);
-				JOptionPane.showMessageDialog(contentPane, SetClient.client.send(String.join(" ", "CREATE", m, "\r\n")));
-				// TODO Join game...
+				m = SetClient.client.send(String.join(" ", "CREATE", m, "\r\n"));
+				
+				JOptionPane.showMessageDialog(contentPane, m);
+				int gid = Integer.parseInt(m.substring(20));
+				String gs = SetClient.client.send("GAMES\r\n");
+				String u = "";
+				for(String g : gs.split("\n")){
+					if(g.startsWith(String.valueOf(gid)+": ")){
+						u = g;
+					}
+				}
+				GameFrame game = new GameFrame(u, gid);
+				close();
 			}
 		});
 	}
@@ -120,5 +136,13 @@ public class LobbyFrame extends JFrame {
 	public void close(){
 		setVisible(false);
 		dispose();
+	}
+	
+	public void resize(){
+//		pack();
+//		setLocationRelativeTo(null);
+//		setVisible(true);
+		revalidate();
+		repaint();
 	}
 }
