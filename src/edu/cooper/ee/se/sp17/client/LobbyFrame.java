@@ -60,6 +60,7 @@ public class LobbyFrame extends JFrame {
 		panel.add(btn_logout);
 
 		glp = new GameListPane();
+		glp.refresh();
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
