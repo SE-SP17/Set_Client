@@ -37,7 +37,7 @@ public class GamePanel extends JPanel {
 
 	public GamePanel() {
 		// TODO Auto-generated constructor stub
-		this.setPreferredSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(600, 900));
 		this.setBackground(Color.GRAY);
 
 		layout = new GridLayout(rows, cols);

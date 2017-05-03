@@ -1,7 +1,6 @@
 package edu.cooper.ee.se.sp17.client;
 
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -42,9 +42,16 @@ public class GameFrame extends JFrame {
 		
 		
 		//game display
+		JPanel p = new JPanel(new FlowLayout());
+		contentPane.add(p);
+		
 		gp = new GamePanel();
 		gp.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		contentPane.add(gp);
+		p.add(gp);
+		
+		JLabel lbl_scores = new JLabel("    ");
+		p.add(lbl_scores);
+//		contentPane.add(gp);
 		
 		//check if board returns anything to see if game has started
 		String m = SetClient.client.send("BOARD\r\n");
@@ -66,11 +73,6 @@ public class GameFrame extends JFrame {
 		bot_menu.add(btn_set);
 		btn_nomore = new JButton("NOMORE");
 		bot_menu.add(btn_nomore);
-		
-		//set screen size
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension pref = new Dimension((int)screenSize.getHeight()/2, (int)screenSize.getHeight()/4*3);
-		contentPane.setPreferredSize(pref);
 
 		pack();
 		setLocationRelativeTo(null);
@@ -110,6 +112,9 @@ public class GameFrame extends JFrame {
 							select[1]+" "+
 							select[2]+" "+
 							"\r\n");
+					SetClient.client.recv();
+					SetClient.client.recv();
+					SetClient.client.recv();
 					JOptionPane.showMessageDialog(gp.getRootPane(), m);
 					if(m.startsWith("Cards ")){
 						gp.unselect(select);
@@ -132,6 +137,9 @@ public class GameFrame extends JFrame {
 				//TODO display when other players call nomore, 
 				//update board with more cards when everyone calls it
 				JOptionPane.showMessageDialog(gp.getRootPane(), m);
+				if(m.equals("You're not playing a game")){
+					return;
+				}
 				String next = SetClient.client.send("");
 				if(next.startsWith("1") || next.startsWith("2") ){
 					SetClient.client.send(""); //flush out 

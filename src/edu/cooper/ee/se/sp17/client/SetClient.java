@@ -57,6 +57,16 @@ public class SetClient {
 		}
 	}
 	
+	public String recv(){
+		try{
+			return s_in.readLine();
+		}catch(IOException e){
+			System.err.println("Cannot talk to the server!");
+			System.exit(-2);
+		}
+		return null;
+	}
+	
 	public String send(String cmd){
 		try{
 			s_out.write(cmd.getBytes());
