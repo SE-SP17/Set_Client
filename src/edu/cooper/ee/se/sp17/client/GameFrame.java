@@ -99,6 +99,21 @@ public class GameFrame extends JFrame {
 				}
 			}
 		});	
+		btn_set.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				//if()
+				
+				String m = SetClient.client.send("SET\r\n");
+				JOptionPane.showMessageDialog(gp.getRootPane(), m);
+				if(m.equals("Game started!")){
+					System.out.println(m);
+					gp.setEnabled(true);
+					gp.fillBoard();
+				}
+			}
+		});	
 	}
 
 	public void close(){

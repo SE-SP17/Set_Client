@@ -89,15 +89,13 @@ public class GamePanel extends JPanel {
 			cardButtons.get(i).addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent ev) {
 					if (ev.getStateChange() == ItemEvent.SELECTED) {
-						if (selected > 3) {
+						selected++;
+						if (selected >= 4) {
 							// undo card selection if 3 are already chosen
 							JToggleButton clicked = ((JToggleButton) ev.getItem());
-							if(!clicked.isSelected()){
-								clicked.doClick();
-							}
-						}
-						else{
-							selected++;
+//							clicked.doClick();
+							clicked.setSelected(false);
+							System.out.println("more than 3");
 						}
 					} else if (ev.getStateChange() == ItemEvent.DESELECTED) {
 						selected--;
