@@ -136,7 +136,7 @@ public class GameFrame extends JFrame {
 				if(next.startsWith("1") || next.startsWith("2") ){
 					SetClient.client.send(""); //flush out 
 					SetClient.client.send("");
-					gp.addCardButtons(3);
+					//gp.addCardButtons(3);
 					gp.fillBoard();
 				}
 			}
