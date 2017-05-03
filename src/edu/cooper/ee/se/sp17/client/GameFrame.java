@@ -1,7 +1,6 @@
 package edu.cooper.ee.se.sp17.client;
 
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -42,9 +42,16 @@ public class GameFrame extends JFrame {
 		
 		
 		//game display
+		JPanel center = new JPanel(new FlowLayout());
+		contentPane.add(center);
+		
 		gp = new GamePanel();
 		gp.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		contentPane.add(gp);
+		center.add(gp);
+		
+		JLabel scores = new JLabel();
+		scores.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		center.add(scores);
 		
 		//check if board returns anything to see if game has started
 		String m = SetClient.client.send("BOARD\r\n");
@@ -68,9 +75,9 @@ public class GameFrame extends JFrame {
 		bot_menu.add(btn_nomore);
 		
 		//set screen size
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension pref = new Dimension((int)screenSize.getHeight()/2, (int)screenSize.getHeight()/4*3);
-		contentPane.setPreferredSize(pref);
+//		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//		Dimension pref = new Dimension((int)screenSize.getHeight()/2, (int)screenSize.getHeight()/4*3);
+//		contentPane.setPreferredSize(pref);
 
 		pack();
 		setLocationRelativeTo(null);
