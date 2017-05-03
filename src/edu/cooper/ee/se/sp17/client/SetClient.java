@@ -10,7 +10,8 @@ import javax.swing.JOptionPane;
 
 public class SetClient {
 	
-	final static String HOST = "199.98.20.117";
+	//final static String HOST = "199.98.20.117";
+	final static String HOST = "localhost";
 	final static int PORT = 6666;
 	
 	public static SetClient client;
@@ -72,6 +73,19 @@ public class SetClient {
 					tmp = s_in.readLine();
 					o += "\n" + tmp;
 				}
+				return o;
+			} else if(cmd.toUpperCase().startsWith("BOARD")){
+				String tmp = o;
+				
+				while(!tmp.startsWith("--END--")){
+					if(tmp.equals("You're not playing a game")){
+						return o;
+					} 
+					tmp = s_in.readLine();
+					System.out.println(tmp);
+					o += "\n" + tmp;
+				}
+				System.out.println("returning board");
 				return o;
 			}
 			return o;

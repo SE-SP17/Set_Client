@@ -111,8 +111,10 @@ public class GamePanel extends JPanel {
 	
 	// fill board with current cards
 	public void fillBoard(){
-		//board = SetClient.client.send("BOARD\r\n").split("\n");
-		System.out.println( SetClient.client.send("BOARD\r\n"));
+		String m = SetClient.client.send("BOARD\r\n");
+		board = m.split("\n");
+		System.out.println("number of cards " +board.length);
+		
 				
 //		board = new String[] {  "1111", "2222", "3333", "1232", 
 //								"1312", "3212", "3211", "2311", 
@@ -122,13 +124,15 @@ public class GamePanel extends JPanel {
 		for (int i = 0; i < board.length; i++) {
 			System.out.println(board[i]);
 			int index = board[i].indexOf(":");
-			for (int k = 0; k < 4; k++) {
-				char c = board[i].charAt(index + (k+1)*2); //location of digit
-				System.out.println(c);
-				type[k] = Character.getNumericValue(c);
+			if(index > -1){
+				for (int k = 0; k < 4; k++) {
+					char c = board[i].charAt(index + (k+1)*2); //location of digit
+					System.out.println(c);
+					type[k] = Character.getNumericValue(c);
+				}
+				// create button with correct ImageIcon
+				cards[i].setIcon(cardImages[type[0]] [type[1]] [type[2]] [type[3]]);
 			}
-			// create button with correct ImageIcon
-			cards[i].setIcon(cardImages[type[0]] [type[1]] [type[2]] [type[3]]);
 		}
 	}
 	@Override
