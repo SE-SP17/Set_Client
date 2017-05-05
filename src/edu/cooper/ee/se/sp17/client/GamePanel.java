@@ -25,27 +25,30 @@ import javax.swing.ImageIcon;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 public class GamePanel extends JPanel {
-	private ArrayList<JToggleButton> cardButtons = new ArrayList<JToggleButton>();
-	private ArrayList<String> boardCards = new ArrayList<String>();
-	private ImageIcon[][][][] cardImages = new ImageIcon[4][4][4][4];
-	int rows = 4;
-	int cols = 3;
-	int currentNumber = 12;
-
+	private ArrayList<JToggleButton> cardButtons;
+	private ArrayList<String> boardCards;
+	private ImageIcon[][][][] cardImages;
+	int rows, cols, currentNumber;
 	int selected = 0;
 	GridLayout layout;
 
 	public GamePanel() {
-		// TODO Auto-generated constructor stub
+		cardButtons = new ArrayList<JToggleButton>();
+		boardCards = new ArrayList<String>();
+		cardImages = new ImageIcon[4][4][4][4];
+		rows = 4;
+		cols = 3;
+		currentNumber = rows*cols;
+		
 		this.setPreferredSize(new Dimension(600, 850));
 		this.setBackground(Color.GRAY);
 
-//		layout = new GridLayout(rows, cols);
-//		setLayout(layout);
+		layout = new GridLayout(rows, cols);
+		setLayout(layout);
 //		loadImages();
 //		createCards();
 	}
-//
+
 //	public void loadImages() {
 //		System.out.println("loading images");
 //		for (int a = 0; a < 4; a++) {

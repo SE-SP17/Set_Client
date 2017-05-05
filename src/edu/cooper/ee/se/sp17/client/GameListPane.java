@@ -1,6 +1,7 @@
 package edu.cooper.ee.se.sp17.client;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -10,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class GameListPane extends JPanel {
 	private Font f = new Font("Tahoma", Font.BOLD, 20);
@@ -60,7 +62,8 @@ public class GameListPane extends JPanel {
 						}
 						
 						GameFrame game = new GameFrame(name, gid);
-//						l.close(); // TODO ?
+						LobbyFrame l = (LobbyFrame)SwingUtilities.getWindowAncestor((Component) arg0.getSource());
+						l.close();
 					}
 
 					@Override

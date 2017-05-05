@@ -20,7 +20,7 @@ public class GameFrame extends JFrame {
 	int gid;
 	JButton btn_leave, btn_start, btn_end;
 	GamePanel gp;
-	JButton btn_nomore, btn_set;
+	JButton btn_nomore, btn_set, btn_refresh;
 	
 	public GameFrame(String title, int gid) {
 		super(title);
@@ -61,6 +61,8 @@ public class GameFrame extends JFrame {
 		bot_menu.add(btn_set);
 		btn_nomore = new JButton("NOMORE");
 		bot_menu.add(btn_nomore);
+		btn_refresh = new JButton("Refresh");
+		bot_menu.add(btn_refresh);
 
 		pack();
 		setLocationRelativeTo(null);
@@ -74,6 +76,7 @@ public class GameFrame extends JFrame {
 			gp.setEnabled(false);
 		}
 		else{
+			// Clear out read buffer
 			while(!rply.startsWith("--END--")){
 				rply = SetClient.client.recv();
 			}
@@ -98,8 +101,8 @@ public class GameFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SetClient.client.send("START\r\n");
-				String rply = SetClient.client.recv();
-				JOptionPane.showMessageDialog(gp.getRootPane(), rply);
+				String rply = SetClient.client.recvprev();
+				//JOptionPane.showMessageDialog(gp.getRootPane(), rply);
 				
 				if(rply.equals("Game started!")){
 					gp.setEnabled(true);
@@ -112,19 +115,28 @@ public class GameFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SetClient.client.send("END\r\n");
-				String rply = SetClient.client.recv();
+				String rply = SetClient.client.recvprev();
 				
 				String msg = "";
 				if(rply.equals("You're not playing a game")){
 					msg = rply;
 					JOptionPane.showMessageDialog(getRootPane(), msg);
-				}else{
+				}
+				gp.setEnabled(false);
+			}
+		});
+		
+		btn_refresh.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SetClient.client.send("BOARD\r\n");
+				String rply = SetClient.client.recv();
+				if(!rply.equals("You're not playing a game")){
+					// Clear out read buffer
 					while(!rply.startsWith("--END--")){
-						msg += rply+"\n";
 						rply = SetClient.client.recv();
 					}
-					JOptionPane.showMessageDialog(getRootPane(), msg);
-					gp.setEnabled(false);
+					gp.refresh();
 				}
 			}
 		});

@@ -20,6 +20,9 @@ public class SetClient {
 	private DataOutputStream s_out;
 	private LoginFrame login;
 	
+	Listener l;
+	String prev = "";
+	
 	public SetClient(String host, int port){
 		System.out.println("Attempting to connect to the game server...");
 		try {
@@ -44,6 +47,9 @@ public class SetClient {
 			System.exit(-2);
 		}
 		
+		l = new Listener(s_in);
+		new Thread(l).start();
+		
 		login = new LoginFrame("Set Game Client 0xFF");
 	}
 	
@@ -58,13 +64,8 @@ public class SetClient {
 	}
 	
 	public String recv(){
-		try{
-			return s_in.readLine();
-		}catch(IOException e){
-			System.err.println("Cannot talk to the server!");
-			System.exit(-2);
-		}
-		return null;
+		prev = l.readline();
+		return prev;
 	}
 	
 	public void send(String cmd){
@@ -97,5 +98,9 @@ public class SetClient {
 			System.err.println("Cannot talk to the server!");
 			System.exit(-2);
 		}
+	}
+
+	public String recvprev() {
+		return prev;
 	}
 }
