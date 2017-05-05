@@ -68,7 +68,7 @@ public class LobbyFrame extends JFrame {
 		layout.setConstraints(out, c);
 		panel.add(out);
 
-		glp = new GameListPane(this);
+		glp = new GameListPane();
 		glp.refresh();
 		out.add(glp);
 
@@ -95,8 +95,8 @@ public class LobbyFrame extends JFrame {
 		btn_logout.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String msg = SetClient.client.send("LOGOUT\r\n");
-				JOptionPane.showMessageDialog(contentPane, msg);
+				SetClient.client.send("LOGOUT\r\n");
+				JOptionPane.showMessageDialog(contentPane, SetClient.client.recv());
 				LoginFrame login = new LoginFrame("Set Game Client 0xFF");
 				close();
 			}
@@ -106,28 +106,36 @@ public class LobbyFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				glp.refresh();
+				resize();
 			}
 		});
 
 		btn_create.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String m = JOptionPane.showInputDialog("Max users:");
-				if(m == null || m.equals("")) return;
+				String str_max = JOptionPane.showInputDialog("Max users:");
+				if(str_max == null || str_max.equals("")) return;
 				
-				int max = Integer.parseInt(m);
-				m = SetClient.client.send(String.join(" ", "CREATE", m, "\r\n"));
+				int max = Integer.parseInt(str_max);
+				SetClient.client.send(String.join(" ", "CREATE", str_max, "\r\n"));
 				
-				JOptionPane.showMessageDialog(contentPane, m);
-				int gid = Integer.parseInt(m.substring(20));
-				String gs = SetClient.client.send("GAMES\r\n");
-				String u = "";
-				for(String g : gs.split("\n")){
-					if(g.startsWith(String.valueOf(gid)+": ")){
-						u = g;
+				// Get gid
+				String rply = SetClient.client.recv();
+				JOptionPane.showMessageDialog(contentPane, rply);
+				int gid = Integer.parseInt(rply.substring(20));
+				
+				// Get game name
+				SetClient.client.send("GAMES\r\n");
+				rply = SetClient.client.recv();
+				String name = "";
+				while(!rply.startsWith("--END--")){
+					if(rply.startsWith(String.valueOf(gid))){
+						name = rply;
 					}
+					rply = SetClient.client.recv();
 				}
-				GameFrame game = new GameFrame(u, gid);
+				
+				GameFrame game = new GameFrame(name, gid);
 				close();
 			}
 		});
@@ -138,6 +146,7 @@ public class LobbyFrame extends JFrame {
 		dispose();
 	}
 	
+	// TODO
 	public void resize(){
 //		pack();
 //		setLocationRelativeTo(null);

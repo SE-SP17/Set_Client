@@ -40,7 +40,6 @@ public class GameFrame extends JFrame {
 		btn_end = new JButton("END");
 		top_menu.add(btn_end);
 		
-		
 		//game display
 		JPanel p = new JPanel(new FlowLayout());
 		contentPane.add(p);
@@ -49,23 +48,12 @@ public class GameFrame extends JFrame {
 		gp.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 		p.add(gp);
 		
+		// TODO SCORES
 		JLabel lbl_scores = new JLabel("    ");
 		p.add(lbl_scores);
-//		contentPane.add(gp);
 		
-		//check if board returns anything to see if game has started
-		String m = SetClient.client.send("BOARD\r\n");
-		if(m.equals("You're not playing a game")){
-			gp.setEnabled(false);
-		}
-		else{
-			gp.setEnabled(true);
-			gp.fillBoard();
-		}
-		System.out.println(m);
-		
-		JPanel bot_menu = new JPanel(new FlowLayout());
 		//bottom menu controls - gameplay
+		JPanel bot_menu = new JPanel(new FlowLayout());
 		bot_menu.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 		contentPane.add(bot_menu);
 		
@@ -79,76 +67,116 @@ public class GameFrame extends JFrame {
 		setResizable(true);
 		setVisible(true);
 		
+		//check if board returns anything to see if game has started
+		SetClient.client.send("BOARD\r\n");
+		String rply = SetClient.client.recv();
+		if(rply.equals("You're not playing a game")){
+			gp.setEnabled(false);
+		}
+		else{
+			while(!rply.startsWith("--END--")){
+				rply = SetClient.client.recv();
+			}
+			gp.setEnabled(true);
+			gp.refresh();
+		}
+		
 		btn_leave.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String m = SetClient.client.send("LEAVE\r\n");
-				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-				LobbyFrame l = new LobbyFrame("Set Game Client 0xFF", SetClient.client.send("WHOAMI\r\n"));
+				SetClient.client.send("LEAVE\r\n");
+				String rply = SetClient.client.recv();
+				JOptionPane.showMessageDialog(gp.getRootPane(), rply);
+				
+				SetClient.client.send("WHOAMI\r\n");
+				LobbyFrame l = new LobbyFrame("Set Game Client 0xFF", SetClient.client.recv());
 				close();
 			}
 		});
+		
 		btn_start.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				SetClient.client.send("START\r\n");
+				String rply = SetClient.client.recv();
+				JOptionPane.showMessageDialog(gp.getRootPane(), rply);
 				
-				String m = SetClient.client.send("START\r\n");
-				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-				if(m.equals("Game started!")){
-					System.out.println(m);
+				if(rply.equals("Game started!")){
 					gp.setEnabled(true);
-					gp.fillBoard();
+					gp.refresh();
 				}
 			}
-		});	
-		btn_set.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(gp.selected == 3){
-					int[] select = gp.getSelectedCards();
-					
-					String m = SetClient.client.send("SET "+
-							select[0]+" "+
-							select[1]+" "+
-							select[2]+" "+
-							"\r\n");
-					SetClient.client.recv();
-					SetClient.client.recv();
-					SetClient.client.recv();
-					JOptionPane.showMessageDialog(gp.getRootPane(), m);
-					if(m.startsWith("Cards ")){
-						gp.unselect(select);
-						
-					}
-					if(m.startsWith("Player ")){
-						gp.unselect(select);
-						gp.fillBoard();
-						
-					}
-					//TODO handle scoring, update board
-				}
-			}
-		});	
+		});
 		
-		btn_nomore.addActionListener(new ActionListener(){
+		btn_end.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String m = SetClient.client.send("NOMORE\r\n");
-				//TODO display when other players call nomore, 
-				//update board with more cards when everyone calls it
-				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-				if(m.equals("You're not playing a game")){
-					return;
-				}
-				String next = SetClient.client.send("");
-				if(next.startsWith("1") || next.startsWith("2") ){
-					SetClient.client.send(""); //flush out 
-					SetClient.client.send("");
-					//gp.addCardButtons(3);
-					gp.fillBoard();
+				SetClient.client.send("END\r\n");
+				String rply = SetClient.client.recv();
+				
+				String msg = "";
+				if(rply.equals("You're not playing a game")){
+					msg = rply;
+					JOptionPane.showMessageDialog(getRootPane(), msg);
+				}else{
+					while(!rply.startsWith("--END--")){
+						msg += rply+"\n";
+						rply = SetClient.client.recv();
+					}
+					JOptionPane.showMessageDialog(getRootPane(), msg);
+					gp.setEnabled(false);
 				}
 			}
-		});	
+		});
+		
+//		btn_set.addActionListener(new ActionListener(){
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				if(gp.selected == 3){
+//					int[] select = gp.getSelectedCards();
+//					
+//					String m = SetClient.client.send("SET "+
+//							select[0]+" "+
+//							select[1]+" "+
+//							select[2]+" "+
+//							"\r\n");
+//					SetClient.client.recv();
+//					SetClient.client.recv();
+//					SetClient.client.recv();
+//					JOptionPane.showMessageDialog(gp.getRootPane(), m);
+//					if(m.startsWith("Cards ")){
+//						gp.unselect(select);
+//						
+//					}
+//					if(m.startsWith("Player ")){
+//						gp.unselect(select);
+//						gp.fillBoard();
+//						
+//					}
+//					//TODO handle scoring, update board
+//				}
+//			}
+//		});	
+//		
+//		btn_nomore.addActionListener(new ActionListener(){
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				String m = SetClient.client.send("NOMORE\r\n");
+//				//TODO display when other players call nomore, 
+//				//update board with more cards when everyone calls it
+//				JOptionPane.showMessageDialog(gp.getRootPane(), m);
+//				if(m.equals("You're not playing a game")){
+//					return;
+//				}
+//				String next = SetClient.client.send("");
+//				if(next.startsWith("1") || next.startsWith("2") ){
+//					SetClient.client.send(""); //flush out 
+//					SetClient.client.send("");
+//					//gp.addCardButtons(3);
+//					gp.fillBoard();
+//				}
+//			}
+//		});
 	}
 
 	public void close(){

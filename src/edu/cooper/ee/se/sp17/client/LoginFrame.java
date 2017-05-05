@@ -68,11 +68,16 @@ public class LoginFrame extends JFrame {
 		btn_login.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String msg = SetClient.client.send(String.join(" ", "LOGIN", tf_user.getText(), 
-						String.valueOf(tf_pass.getPassword()), "\r\n"));
+				SetClient.client.send(String.join(" ", "LOGIN", tf_user.getText(), String.valueOf(tf_pass.getPassword()), "\r\n"));
+				String msg = SetClient.client.recv();
+				
 				JOptionPane.showMessageDialog(contentPane, msg);
 				if(msg.equals("User logged in successfully")){
-					LobbyFrame lobby = new LobbyFrame("Set Game Client 0xFF", SetClient.client.send("WHOAMI\r\n"));
+					SetClient.client.send("WHOAMI\r\n");
+					
+					String asdf = SetClient.client.recv();
+					System.out.println(asdf);
+					LobbyFrame lobby = new LobbyFrame("Set Game Client 0xFF", asdf);
 					close();
 				}
 			}
@@ -81,9 +86,8 @@ public class LoginFrame extends JFrame {
 		btn_reg.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String msg = SetClient.client.send(String.join(" ", "REGISTER", tf_user.getText(), 
-						String.valueOf(tf_pass.getPassword()), "\r\n"));
-				JOptionPane.showMessageDialog(contentPane, msg);
+				SetClient.client.send(String.join(" ", "REGISTER", tf_user.getText(), String.valueOf(tf_pass.getPassword()), "\r\n"));
+				JOptionPane.showMessageDialog(contentPane, SetClient.client.recv());
 			}
 		});
 	}

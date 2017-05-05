@@ -67,42 +67,35 @@ public class SetClient {
 		return null;
 	}
 	
-	public String send(String cmd){
+	public void send(String cmd){
 		try{
 			s_out.write(cmd.getBytes());
 			s_out.flush();
 
 			// Add Board/Set/Etc
-			String o = s_in.readLine();
-			if(o.startsWith("From")){
-				JOptionPane.showMessageDialog(login.getRootPane(), o);
-				return s_in.readLine();
-			}else if(cmd.toUpperCase().startsWith("GAMES")){
-				String tmp = o;
-				while(!tmp.startsWith("--END--")){
-					tmp = s_in.readLine();
-					o += "\n" + tmp;
-				}
-				return o;
-			} else if(cmd.toUpperCase().startsWith("BOARD")){
-				String tmp = o;
-				
-				while(!tmp.startsWith("--END--")){
-					if(tmp.equals("You're not playing a game")){
-						return o;
-					} 
-					tmp = s_in.readLine();
-					System.out.println(tmp);
-					o += "\n" + tmp;
-				}
-				System.out.println("returning board");
-				return o;
-			}
-			return o;
+//			String o = s_in.readLine();
+//			if(o.startsWith("From")){
+//				JOptionPane.showMessageDialog(login.getRootPane(), o);
+//				return s_in.readLine();
+//			}
+//			} else if(cmd.toUpperCase().startsWith("BOARD")){
+//				String tmp = o;
+//				
+//				while(!tmp.startsWith("--END--")){
+//					if(tmp.equals("You're not playing a game")){
+//						return o;
+//					} 
+//					tmp = s_in.readLine();
+//					System.out.println(tmp);
+//					o += "\n" + tmp;
+//				}
+//				System.out.println("returning board");
+//				return o;
+//			}
+//			return o;
 		}catch(IOException e){
 			System.err.println("Cannot talk to the server!");
 			System.exit(-2);
 		}
-		return null;
 	}
 }

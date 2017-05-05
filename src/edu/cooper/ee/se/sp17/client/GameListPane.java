@@ -12,26 +12,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GameListPane extends JPanel {
-	private LobbyFrame l;
 	private Font f = new Font("Tahoma", Font.BOLD, 20);
 	
-	public GameListPane(LobbyFrame lf) {
+	public GameListPane() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		setBackground(Color.GRAY);
-		l = lf;
 	}
 	
 	public void refresh(){
-		String games = SetClient.client.send("GAMES\r\n");
-		String g[] = games.split("\n");
-		
+		SetClient.client.send("GAMES\r\n");
+		String rply = SetClient.client.recv();
 		removeAll();
-		if(g.length == 1){
-			add(new JLabel("No games"));
+		
+		if(rply.startsWith("--END--")){
+			JLabel jl = new JLabel("No games");
+			jl.setFont(f);
+			add(jl);
 		}else{
-			for(int i = 0; i < g.length-1; i++){
-				JLabel gl = new JLabel(g[i]);
+			while(!rply.startsWith("--END--")){
+				JLabel gl = new JLabel(rply);
 				gl.setFont(f);
 				gl.setBorder(BorderFactory.createEmptyBorder(3, 1, 3, 1));
 				add(gl);
@@ -40,22 +40,27 @@ public class GameListPane extends JPanel {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						JLabel jl = (JLabel)arg0.getSource();
-						String m = SetClient.client.send(String.join(" ", "JOIN", jl.getText().split(":")[0], "\r\n"));
-						JOptionPane.showMessageDialog(jl.getRootPane(), m);
-						if(m.equals("Game is already full")){
+						SetClient.client.send(String.join(" ", "JOIN", jl.getText().split(":")[0], "\r\n"));
+						String msg = SetClient.client.recv();
+						JOptionPane.showMessageDialog(jl.getRootPane(), msg);
+						
+						if(msg.equals("Game is already full")){
 							return;
 						}
 						
 						int gid = Integer.parseInt(jl.getText().split(":")[0]);
-						String gs = SetClient.client.send("GAMES\r\n");
-						String u = "";
-						for(String g : gs.split("\n")){
-							if(g.startsWith(String.valueOf(gid)+": ")){
-								u = g;
+						SetClient.client.send("GAMES\r\n");
+						msg = SetClient.client.recv();
+						String name = "";
+						while(!msg.startsWith("--END--")){
+							if(msg.startsWith(String.valueOf(gid))){
+								name = msg;
 							}
+							msg = SetClient.client.recv();
 						}
-						GameFrame game = new GameFrame(u, gid);
-						l.close();
+						
+						GameFrame game = new GameFrame(name, gid);
+//						l.close(); // TODO ?
 					}
 
 					@Override
@@ -67,10 +72,10 @@ public class GameListPane extends JPanel {
 					@Override
 					public void mouseReleased(MouseEvent arg0) {}
 				});
+				rply = SetClient.client.recv();
 			}
 		}
 		revalidate();
 		repaint();
-		l.resize(); // TODO
 	}
 }
