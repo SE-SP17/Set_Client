@@ -135,8 +135,10 @@ public class GameFrame extends JFrame {
 				if(!rply.equals("You're not playing a game")){
 					// Clear out read buffer
 					while(!rply.startsWith("--END--")){
-						rply += SetClient.client.recv();
+						System.out.println(rply);
+						rply = SetClient.client.recv();
 					}
+					System.out.println("refresh reply: " + rply);
 					gp.refresh();
 				}
 			}
