@@ -50,6 +50,15 @@ public class GamePanel extends JPanel {
 		createCardButtons(0, 12);
 	}
 
+	@Override
+	public void setEnabled(boolean enabled) {
+		System.out.println("enabled: " + enabled);
+		super.setEnabled(enabled);
+		for (Component component : getComponents()) {
+			component.setEnabled(enabled);
+		}
+	}
+
 	public void loadImages() {
 		System.out.println("loading images");
 		for (int a = 0; a < 4; a++) {
@@ -60,7 +69,7 @@ public class GamePanel extends JPanel {
 						// ImageIcon(getClass().getResource("res/cards/" +
 						// a+b+c+d +".png"));
 						String type = "" + a + b + c + d;
-						//System.out.println(type);
+						// System.out.println(type);
 						cardImages[a][b][c][d] = new ImageIcon("res/cards/" + type + ".png");
 					}
 				}
@@ -92,12 +101,12 @@ public class GamePanel extends JPanel {
 							JToggleButton clicked = ((JToggleButton) ev.getItem());
 							// clicked.doClick();
 							clicked.setSelected(false);
-							//System.out.println("more than 3");
+							// System.out.println("more than 3");
 						}
 					} else if (ev.getStateChange() == ItemEvent.DESELECTED) {
 						selected--;
 					}
-					//System.out.println(selected);
+					// System.out.println(selected);
 				}
 			});
 
@@ -105,120 +114,32 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	//
-	// // fill board with current cards
-	// public void fillBoard() {
-	// // Get board from server
-	// String m = SetClient.client.send("BOARD\r\n");
-	// boardCards = new ArrayList<String>(Arrays.asList(m.split("\n")));
-	// System.out.println("number of cards " + (boardCards.size()-1));
-	//
-	//// // add buttons if there are more than 12 cards
-	// if (boardCards.size() - 1 > currentNumber) {
-	// addCardButtons(boardCards.size() - 1 - 12);
-	//
-	// }
-	// else if(boardCards.size() - 1 < currentNumber){
-	//
-	// rows--;
-	// layout.setRows(rows);
-	// layout.setColumns(cols);
-	// System.out.println("rows " + rows);
-	// System.out.println("cols " + cols);
-	//
-	// this.remove( cardButtons.get(cardButtons.size()-1) );
-	// cardButtons.remove( cardButtons.size()-1);
-	//
-	// this.remove( cardButtons.get(cardButtons.size()-1));
-	// cardButtons.remove( cardButtons.size()-1);
-	//
-	// this.remove( cardButtons.get(cardButtons.size()-1));
-	// cardButtons.remove( cardButtons.size()-1);
-	// this.revalidate();
-	// this.repaint();
-	//
-	// }
-	// currentNumber = boardCards.size()-1;
-	//
-	// // parse card type into digits for accessing images
-	// int[] type = new int[4];
-	// for (int i = 0; i < boardCards.size() - 1; i++) {
-	// System.out.println(boardCards.get(i));
-	// int index = boardCards.get(i).indexOf(":");
-	// if (index > -1) {
-	// for (int k = 0; k < 4; k++) {
-	// char c = boardCards.get(i).charAt(index + (k + 1) * 2); // location
-	// // of
-	// // digit
-	// System.out.println(c);
-	// type[k] = Character.getNumericValue(c);
-	// }
-	// // create button with correct ImageIcon
-	// cardButtons.get(i).setIcon(cardImages[type[0]][type[1]][type[2]][type[3]]);
-	// }
-	// }
-	// }
-	//
-//	public int[] getSelectedCards() {
-//		int i = 0;
-//		int index = 0;
-//		int[] selected = new int[3]; // return index of card
-//		for (JToggleButton card : cardButtons) {
-//			if (card.isSelected()) {
-//				if (boardCards.get(index).charAt(1) == ':') {
-//					selected[i++] = Integer.parseInt(boardCards.get(index).substring(0, 1));
-//				} else {
-//					selected[i++] = Integer.parseInt(boardCards.get(index).substring(0, 2));
-//				}
-//			}
-//			index++;
-//		}
-//		return selected;
-//	}
-
 	// add cards and update display
 	public void addCardButtons() {
 		// TODO add card buttons when everyone calls nomore
-				
+
 		// update display
-		rows += (cards.size()-numCards) % 3;
+		rows += (cards.size() - numCards) % 3;
 		layout.setRows(rows);
 		layout.setColumns(cols);
-		
+
 		createCardButtons(numCards, cards.size());
 	}
-	
+
 	// remove cards and update display
-	public void removeCardButtons(){
-		//remove buttons from display
-		for(int i = cards.size(); i < numCards; i++ ){
+	public void removeCardButtons() {
+		// remove buttons from display
+		for (int i = cards.size(); i < numCards; i++) {
 			this.remove(cardButtons.get(i));
 		}
-		
+
 		// remove buttons from arraylist
 		cardButtons.subList(cards.size(), numCards).clear();
-		
-		//update display
-		rows -= (cards.size()-numCards) % 3;
-		layout.setRows(rows);	
-		layout.setColumns(cols);
-	}
 
-	// // unselect all current card selections
-	// public void unselect(int[] selected) {
-	// for (int i = 0; i < selected.length; i++) {
-	// cardButtons.get(selected[i]).setSelected(false);
-	// }
-	// }
-	//
-	
-	@Override
-	public void setEnabled(boolean enabled) {
-		System.out.println("enabled: " + enabled);
-		super.setEnabled(enabled);
-		for (Component component : getComponents()) {
-			component.setEnabled(enabled);
-		}
+		// update display
+		rows -= (cards.size() - numCards) % 3;
+		layout.setRows(rows);
+		layout.setColumns(cols);
 	}
 
 	// Update cards
@@ -230,25 +151,28 @@ public class GamePanel extends JPanel {
 			rply = SetClient.client.recv();
 		}
 	}
-	
-	// parse cards String representation into digit filenames for accessing images
-	public void updateImages(){
+
+	// parse cards String representation into digit filenames for accessing
+	// images
+	public void updateImages() {
 		int[] type = new int[4];
-		for (int i = 0; i < cards.size() ; i++) {
+		for (int i = 0; i < cards.size(); i++) {
 			System.out.println(cards.get(i));
 			int index = cards.get(i).indexOf(":");
 			for (int k = 0; k < 4; k++) {
-				char c = cards.get(i).charAt(index + (k + 1) * 2); // location of digits
-	
+				char c = cards.get(i).charAt(index + (k + 1) * 2); // location
+																	// of digits
+
 				System.out.println(c);
 				type[k] = Character.getNumericValue(c);
 			}
 			// create button with correct ImageIcon
-			cardButtons.get(i).setIcon(cardImages[ type[0]] [type[1]] [type[2]] [type[3]]);
+			cardButtons.get(i).setIcon(cardImages[type[0]][type[1]][type[2]][type[3]]);
 
 		}
 	}
 
+	// refresh display
 	public void refresh() {
 		setEnabled(true);
 		// Clear current cards
@@ -261,31 +185,33 @@ public class GamePanel extends JPanel {
 		// add buttons if there are more than the previous number of cards
 		if (cards.size() > numCards) {
 			addCardButtons();
-		} 
+		}
 		// remove buttons if there are less than 12 cards
 		else if (cards.size() < numCards) {
 			removeCardButtons();
-//			layout.setRows(rows--);
-//			layout.setColumns(cols);
-//			System.out.println("rows " + rows);
-//			System.out.println("cols " + cols);
-
-//			this.remove(cardButtons.get(cardButtons.size() - 1));
-//			cardButtons.remove(cardButtons.size() - 1);
-//
-//			this.remove(cardButtons.get(cardButtons.size() - 1));
-//			cardButtons.remove(cardButtons.size() - 1);
-//
-//			this.remove(cardButtons.get(cardButtons.size() - 1));
-//			cardButtons.remove(cardButtons.size() - 1);
-//			this.revalidate();
-//			this.repaint();
-
 		}
 		numCards = cards.size();
 
 		updateImages();
 
+	}
 
+
+	public String getSelectedCards() {
+		int index = 0;
+		String selected = ""; // return index of card
+		for (JToggleButton card : cardButtons) {
+			if (card.isSelected()) {
+				if (cards.get(index).charAt(1) == ':') {
+					selected += cards.get(index).substring(0, 1) + " ";
+					cardButtons.get(index).setSelected(false);
+				} else {
+					selected += cards.get(index).substring(0, 2) + " ";
+					cardButtons.get(index).setSelected(false);
+				}
+			}
+			index++;
+		}
+		return selected;
 	}
 }

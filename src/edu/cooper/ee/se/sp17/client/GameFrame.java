@@ -148,35 +148,22 @@ public class GameFrame extends JFrame {
 			}
 		});
 		
-//		btn_set.addActionListener(new ActionListener(){
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				if(gp.selected == 3){
-//					int[] select = gp.getSelectedCards();
-//					
-//					String m = SetClient.client.send("SET "+
-//							select[0]+" "+
-//							select[1]+" "+
-//							select[2]+" "+
-//							"\r\n");
-//					SetClient.client.recv();
-//					SetClient.client.recv();
-//					SetClient.client.recv();
-//					JOptionPane.showMessageDialog(gp.getRootPane(), m);
-//					if(m.startsWith("Cards ")){
-//						gp.unselect(select);
-//						
-//					}
-//					if(m.startsWith("Player ")){
-//						gp.unselect(select);
-//						gp.fillBoard();
-//						
-//					}
-//					//TODO handle scoring, update board
-//				}
-//			}
-//		});	
-//		
+		btn_set.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(gp.selected == 3){
+					
+					SetClient.client.send("SET "+gp.getSelectedCards()+"\r\n");
+					String m = SetClient.client.recv();
+
+					JOptionPane.showMessageDialog(gp.getRootPane(), m);
+					gp.refresh();
+
+					//TODO handle scoring, update board
+				}
+			}
+		});	
+		
 		btn_nomore.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
