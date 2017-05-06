@@ -89,6 +89,12 @@ public class GameFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				SetClient.client.send("LEAVE\r\n");
 				String rply = SetClient.client.recv();
+				
+				// Clear out read buffer
+				while(!rply.equals("You left a game")){
+					rply = SetClient.client.recv();
+				}
+		
 				JOptionPane.showMessageDialog(gp.getRootPane(), rply);
 				
 				SetClient.client.send("WHOAMI\r\n");
@@ -135,10 +141,8 @@ public class GameFrame extends JFrame {
 				if(!rply.equals("You're not playing a game")){
 					// Clear out read buffer
 					while(!rply.startsWith("--END--")){
-						System.out.println(rply);
 						rply = SetClient.client.recv();
 					}
-					System.out.println("refresh reply: " + rply);
 					gp.refresh();
 				}
 			}

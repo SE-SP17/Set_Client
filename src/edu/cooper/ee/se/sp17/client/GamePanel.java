@@ -250,6 +250,7 @@ public class GamePanel extends JPanel {
 	}
 
 	public void refresh() {
+		setEnabled(true);
 		// Clear current cards
 		cards.clear();
 		// Get BOARD from server and update cards
