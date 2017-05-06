@@ -21,8 +21,15 @@ public class Listener implements Runnable {
 		while(true){
 			try{
 				String m = br.readLine();
+				// NOMORE, START, 
 				if(m.startsWith("Player") || m.startsWith("Game started") || m.startsWith("You can't")){
-					JOptionPane.showMessageDialog(null, m);
+					System.out.println("Listener messsage: " + m);
+					lines.add(m);
+					
+					// Is message being read too slow? 
+					//shows empty message and hangs if JOption pane is init here
+					//JOptionPane.showMessageDialog(null, m);
+					
 				}else if(m.endsWith("ended the game")){
 					String msg = "";
 						while(!m.startsWith("--END--")){
@@ -41,8 +48,10 @@ public class Listener implements Runnable {
 	}
 
 	synchronized public String readline() {
-		if(lines.size() != 0)
+		if(lines.size() != 0){
+			System.out.println("reading line: " + lines.get(0));
 			return lines.remove(0);
+		}
 		
 		try {
 			Thread.sleep(100);

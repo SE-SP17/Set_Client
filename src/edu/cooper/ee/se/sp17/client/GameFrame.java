@@ -101,8 +101,9 @@ public class GameFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SetClient.client.send("START\r\n");
-				String rply = SetClient.client.recvprev();
+				String rply = SetClient.client.recv();
 				//JOptionPane.showMessageDialog(gp.getRootPane(), rply);
+				System.out.println(rply);
 				
 				if(rply.equals("Game started!")){
 					gp.setEnabled(true);
@@ -134,7 +135,7 @@ public class GameFrame extends JFrame {
 				if(!rply.equals("You're not playing a game")){
 					// Clear out read buffer
 					while(!rply.startsWith("--END--")){
-						rply = SetClient.client.recv();
+						rply += SetClient.client.recv();
 					}
 					gp.refresh();
 				}
@@ -170,25 +171,24 @@ public class GameFrame extends JFrame {
 //			}
 //		});	
 //		
-//		btn_nomore.addActionListener(new ActionListener(){
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				String m = SetClient.client.send("NOMORE\r\n");
-//				//TODO display when other players call nomore, 
-//				//update board with more cards when everyone calls it
-//				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-//				if(m.equals("You're not playing a game")){
-//					return;
-//				}
-//				String next = SetClient.client.send("");
-//				if(next.startsWith("1") || next.startsWith("2") ){
-//					SetClient.client.send(""); //flush out 
-//					SetClient.client.send("");
-//					//gp.addCardButtons(3);
-//					gp.fillBoard();
-//				}
-//			}
-//		});
+		btn_nomore.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SetClient.client.send("NOMORE\r\n");
+				//TODO display when other players call nomore, 
+				//update board with more cards when everyone calls it
+				String m = SetClient.client.recv();
+				JOptionPane.showMessageDialog(gp.getRootPane(), m);
+				if(equals("You're not playing a game")){
+					return;
+				}
+				
+				else if(m.startsWith("Player")) {
+
+					gp.refresh();
+				}
+			}
+		});
 	}
 
 	public void close(){
