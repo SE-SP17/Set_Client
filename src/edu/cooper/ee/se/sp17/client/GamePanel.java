@@ -119,7 +119,7 @@ public class GamePanel extends JPanel {
 		// TODO add card buttons when everyone calls nomore
 
 		// update display
-		rows += (cards.size() - numCards) % 3;
+		cols += (cards.size() - numCards) % cols;
 		layout.setRows(rows);
 		layout.setColumns(cols);
 
@@ -137,7 +137,7 @@ public class GamePanel extends JPanel {
 		cardButtons.subList(cards.size(), numCards).clear();
 
 		// update display
-		rows -= (cards.size() - numCards) % 3;
+		cols -= (cards.size() - numCards) % cols;
 		layout.setRows(rows);
 		layout.setColumns(cols);
 	}
@@ -189,6 +189,8 @@ public class GamePanel extends JPanel {
 		// remove buttons if there are less than 12 cards
 		else if (cards.size() < numCards) {
 			removeCardButtons();
+			this.revalidate();
+			this.repaint();
 		}
 		numCards = cards.size();
 
