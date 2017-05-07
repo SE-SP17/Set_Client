@@ -23,13 +23,20 @@ public class Listener implements Runnable {
 				String m = br.readLine();
 				System.out.println(m);
 				// NOMORE, START, 
-				if(m.startsWith("Player") || m.startsWith("Game started") || m.startsWith("You can't")){
+				if(m.endsWith("there are NO MORE sets") || m.startsWith("Game started") || m.startsWith("You can't")){
 					
 					lines.add(m);
 					
 					// Is message being read too slow? 
 					//shows empty message and hangs if JOption pane is init here
 					//JOptionPane.showMessageDialog(null, m);
+					
+				}
+				// New player joined the game
+				else if(m.endsWith("has joined the game")){
+					//update GameFrame title
+					
+					//show message
 					
 				}
 				// END
