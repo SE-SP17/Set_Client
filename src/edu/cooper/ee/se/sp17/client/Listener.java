@@ -10,10 +10,12 @@ public class Listener implements Runnable {
 
 	BufferedReader br;
 	ArrayList<String> lines;
+	ArrayList<String> messages;
 	
 	public Listener(BufferedReader s_in) {
 		br = s_in;
 		lines = new ArrayList<String>();
+		messages = new ArrayList<String>();
 	}
 
 	@Override
@@ -21,22 +23,27 @@ public class Listener implements Runnable {
 		while(true){
 			try{
 				String m = br.readLine();
-				System.out.println(m);
-				// NOMORE, START, 
-				if(m.endsWith("there are NO MORE sets") || m.startsWith("Game started") || m.startsWith("You can't")){
+				System.out.println("Listener: " + m);
+				// START - started, START - you do not own
+				if( m.startsWith("Game started") || m.startsWith("You can't")){
 					
-					lines.add(m);
+					messages.add(m);
 					
 					// Is message being read too slow? 
 					//shows empty message and hangs if JOption pane is init here
 					//JOptionPane.showMessageDialog(null, m);
 					
 				}
+				// someone called NOMORE
+				else if(m.endsWith("there are NO MORE sets")){
+					messages.add(m);
+				}
 				// New player joined the game
 				else if(m.endsWith("has joined the game")){
 					//update GameFrame title
 					
 					//show message
+					messages.add(m);
 					
 				}
 				// END
@@ -48,6 +55,7 @@ public class Listener implements Runnable {
 						}
 					System.out.println("Listener messsage: " + msg);
 					JOptionPane.showMessageDialog(null, msg);
+					messages.add(m);
 				}
 				// END or LEAVE if only player
 				else if(m.startsWith("Game has ended")){
@@ -58,6 +66,11 @@ public class Listener implements Runnable {
 					}
 				System.out.println("Listener messsage: " + msg);
 //				JOptionPane.showMessageDialog(null, msg);
+				messages.add(m);
+				}
+				// a player called a SET
+				else if(m.startsWith("Player") && m.endsWith(")")){
+					messages.add(m);
 				}
 				else{
 					lines.add(m);
@@ -71,7 +84,7 @@ public class Listener implements Runnable {
 
 	synchronized public String readline() {
 		if(lines.size() != 0){
-			System.out.println("reading line: " + lines.get(0));
+//			System.out.println("reading line: " + lines.get(0));
 			return lines.remove(0);
 		}
 		
@@ -81,6 +94,21 @@ public class Listener implements Runnable {
 			e.printStackTrace();
 		}
 		return readline();
+	}
+	
+	synchronized public String readMessage() {
+		if(messages.size() != 0){
+			System.out.println("reading messsage: " + messages.get(0));
+			return messages.remove(0);
+		}
+		return "";
+		
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		return readMessage();
 	}
 
 }

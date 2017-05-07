@@ -26,6 +26,7 @@ public class GameFrame extends JFrame {
 	JButton btn_leave, btn_start, btn_end;
 	GamePanel gp;
 	JButton btn_nomore, btn_set, btn_refresh;
+	Timer timer;
 
 	public GameFrame(String title, int gid) {
 		super(title);
@@ -74,23 +75,27 @@ public class GameFrame extends JFrame {
 		setResizable(true);
 		setVisible(true);
 
-		// check if board returns anything to see if game has started
-		SetClient.client.send("BOARD\r\n");
-		String rply = SetClient.client.recv();
-		if (rply.equals("You're not playing a game")) {
-			gp.setEnabled(false);
-		} else {
-			// Clear out read buffer
-			while (!rply.startsWith("--END--")) {
-				rply = SetClient.client.recv();
-			}
-			gp.setEnabled(true);
-			gp.refresh();
-		}
+//		// check if board returns anything to see if game has started
+//		SetClient.client.send("BOARD\r\n");
+//		String rply = SetClient.client.recv();
+//		StringBuffer board = new StringBuffer();
+//		if (rply.equals("You're not playing a game")) {
+//			gp.setEnabled(false);
+//		} else {
+//			// Clear out read buffer
+//			while (!rply.startsWith("--END--")) {
+//				rply = SetClient.client.recv();
+//				board.append(rply);
+//			}
+//			gp.setEnabled(true);
+//			gp.refresh(board.toString());
+//		}
 
 		btn_leave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				timer.cancel();
+				timer.purge();
 				SetClient.client.send("LEAVE\r\n");
 				String rply = SetClient.client.recv();
 
@@ -111,14 +116,14 @@ public class GameFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SetClient.client.send("START\r\n");
-				String rply = SetClient.client.recv();
+//				String rply = SetClient.client.recv();
 				// JOptionPane.showMessageDialog(gp.getRootPane(), rply);
-				System.out.println(rply);
+//				System.out.println(rply);
 
-				if (rply.equals("Game started!")) {
-					gp.setEnabled(true);
-					gp.refresh();
-				}
+//				if (rply.equals("Game started!")) {
+//					gp.setEnabled(true);
+//					gp.refresh();
+//				}
 			}
 		});
 
@@ -140,15 +145,15 @@ public class GameFrame extends JFrame {
 		btn_refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SetClient.client.send("BOARD\r\n");
-				String rply = SetClient.client.recv();
-				if (!rply.equals("You're not playing a game")) {
-					// Clear out read buffer
-					while (!rply.startsWith("--END--")) {
-						rply = SetClient.client.recv();
-					}
-					gp.refresh();
-				}
+//				SetClient.client.send("BOARD\r\n");
+//				String rply = SetClient.client.recv();
+//				if (!rply.equals("You're not playing a game")) {
+//					// Clear out read buffer
+//					while (!rply.startsWith("--END--")) {
+//						rply = SetClient.client.recv();
+//					}
+//					gp.refresh();
+//				}
 			}
 		});
 
@@ -158,10 +163,10 @@ public class GameFrame extends JFrame {
 				if (gp.selected == 3) {
 
 					SetClient.client.send("SET " + gp.getSelectedCards() + "\r\n");
-					String m = SetClient.client.recv();
+//					String m = SetClient.client.recv();
 
-					JOptionPane.showMessageDialog(gp.getRootPane(), m);
-					gp.refresh();
+//					JOptionPane.showMessageDialog(gp.getRootPane(), m);
+//					gp.refresh();
 
 					// TODO handle scoring, update board
 				}
@@ -174,21 +179,21 @@ public class GameFrame extends JFrame {
 				SetClient.client.send("NOMORE\r\n");
 				// TODO display when other players call nomore,
 				// update board with more cards when everyone calls it
-				String m = SetClient.client.recv();
-				JOptionPane.showMessageDialog(gp.getRootPane(), m);
-				if (equals("You're not playing a game")) {
-					return;
-				}
-
-				else if (m.startsWith("Player")) {
-
-					gp.refresh();
-				}
+//				String m = SetClient.client.recv();
+//				JOptionPane.showMessageDialog(gp.getRootPane(), m);
+//				if (equals("You're not playing a game")) {
+//					return;
+//				}
+//
+//				else if (m.startsWith("Player")) {
+//
+//					gp.refresh();
+//				}
 			}
 		});
 
-		Timer t = new Timer();
-		t.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000); // run every one second
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000); // run every one second
 																
 	}
 
@@ -200,17 +205,52 @@ public class GameFrame extends JFrame {
 	private class UpdateTimerTask extends TimerTask {
 		public void run() {
 			System.out.println("timer");
-			
+
+			// check if board returns anything to see if game has started
 			SetClient.client.send("BOARD\r\n");
 			String rply = SetClient.client.recv();
-			if (!rply.equals("You're not playing a game")) {
+			StringBuffer board = new StringBuffer();
+			if (rply.equals("You're not playing a game")) {
+				gp.setEnabled(false);
+			} else {
 				// Clear out read buffer
 				while (!rply.startsWith("--END--")) {
+					board.append(rply+"\n");
 					rply = SetClient.client.recv();
 				}
-				gp.refresh();
+				gp.setEnabled(true);
+				gp.refresh(board.toString());
 			}
-			SetClient.client.recv();
+			
+			//check for any messages from other clients for gamestate or player changes
+			String msg = SetClient.client.readMessage();
+			// START - started, START - you do not own
+			if( msg.startsWith("Game started") || msg.startsWith("You can't")){
+				
+				System.out.println(msg);
+				
+			}
+			// someone called NOMORE
+			else if(msg.endsWith("there are NO MORE sets")){
+				System.out.println(msg);
+			}
+			// New player joined the game
+			else if(msg.endsWith("has joined the game")){
+				// GameFrame title
+				
+				//show message
+				System.out.println(msg);
+				
+			}
+			// a player called a SET
+			else if(msg.endsWith(")")){
+				System.out.println("set detected: " + msg);
+			}
+			else{
+				System.out.println("else: "+msg);
+			}
+			
+			
 			
 		}
 	}

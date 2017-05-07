@@ -143,12 +143,21 @@ public class GamePanel extends JPanel {
 	}
 
 	// Update cards
-	public void updateCards() {
-		SetClient.client.send("BOARD\r\n");
-		String rply = SetClient.client.recv();
-		while (!rply.startsWith("--END--")) {
-			cards.add(rply);
-			rply = SetClient.client.recv();
+	public void updateCards(String board) {
+//		SetClient.client.send("BOARD\r\n");
+//		String rply = SetClient.client.recv();
+//		while (!rply.startsWith("--END--")) {
+//			cards.add(rply);
+//			rply = SetClient.client.recv();
+//		}
+		
+		// Clear current cards
+		cards.clear();
+		
+		String[] rep = board.split("\n");
+		for(int i = 0; i < rep.length; i++){
+			System.out.println(rep[i]);
+			cards.add(rep[i]);
 		}
 	}
 
@@ -173,12 +182,11 @@ public class GamePanel extends JPanel {
 	}
 
 	// refresh display
-	public void refresh() {
+	public void refresh(String board) {
 		setEnabled(true);
-		// Clear current cards
-		cards.clear();
-		// Get BOARD from server and update cards
-		updateCards();
+		
+		// update cards
+		updateCards(board);
 
 		System.out.println("number of cards " + cards.size());
 

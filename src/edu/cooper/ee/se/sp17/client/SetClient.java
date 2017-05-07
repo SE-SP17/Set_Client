@@ -67,6 +67,9 @@ public class SetClient {
 		prev = l.readline();
 		return prev;
 	}
+	public String readMessage(){
+		return l.readMessage();
+	}
 	
 	public void send(String cmd){
 		try{
