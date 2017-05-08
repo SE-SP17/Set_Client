@@ -1,6 +1,7 @@
 package edu.cooper.ee.se.sp17.client;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -14,6 +15,7 @@ import java.awt.event.ActionListener;
 
 public class MessagePanel extends JPanel {
 
+	JLabel scores;
 	JTextArea screen;
 	JTextField textbox;
 //	GridLayout layout;
@@ -52,7 +54,8 @@ public class MessagePanel extends JPanel {
 			}
 		});
 		
-		
+		scores = new JLabel("          ");
+		this.add(scores);
 		
 	}
 	
@@ -61,5 +64,9 @@ public class MessagePanel extends JPanel {
 			screen.append(m+"\n");
 		}
 		catch(Exception e) { System.out.println(e); }
+	}
+	
+	public void setScores(String m){
+		scores.setText(m);
 	}
 }

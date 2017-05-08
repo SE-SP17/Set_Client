@@ -171,7 +171,11 @@ public class GameFrame extends JFrame {
 				if (gp.selected == 3) {
 
 					SetClient.client.send("SET " + gp.getSelectedCards() + "\r\n");
-//					String m = SetClient.client.recv();
+					String m = SetClient.client.recv();
+					if(!m.contains("not")){
+						SetClient.client.recv();
+						SetClient.client.recv();
+					}
 
 //					JOptionPane.showMessageDialog(gp.getRootPane(), m);
 //					gp.refresh();
@@ -220,6 +224,24 @@ public class GameFrame extends JFrame {
 			StringBuffer board = new StringBuffer();
 			if (rply.equals("You're not playing a game")) {
 				gp.setEnabled(false);
+//				SetClient.client.send("GAMES\r\n");
+//				String r = SetClient.client.recv();
+//				String a = "";
+//				while (!r.startsWith("--END--")) {
+//					a += r+"\n";
+//					r = SetClient.client.recv();
+//				}
+//				System.err.println("AAAA"+a);
+//				if(!a.contains("*")){
+//					timer.cancel();
+//					timer.purge();
+//
+//					JOptionPane.showMessageDialog(gp.getRootPane(), "Owner left the game");
+//
+//					SetClient.client.send("WHOAMI\r\n");
+//					LobbyFrame l = new LobbyFrame("Set Game Client 0xFF", SetClient.client.recv());
+//					close();
+//				}
 			} else {
 				// Clear out read buffer
 				while (!rply.startsWith("--END--")) {
@@ -228,6 +250,15 @@ public class GameFrame extends JFrame {
 				}
 				gp.setEnabled(true);
 				gp.refresh(board.toString());
+//
+//				SetClient.client.send("SCORE\r\n");
+//				rply = SetClient.client.recv();
+//				String sc = "";
+//				while(!rply.startsWith("--END--")){
+//					sc += rply;
+//					rply = SetClient.client.recv();
+//				}
+				mp.setScores("TEST: 0");
 			}
 			
 			//check for any messages from other clients for gamestate or player changes
@@ -307,8 +338,6 @@ public class GameFrame extends JFrame {
 					mp.addMessage("else:"+msg);
 				}
 			}
-			
-			
 			
 		}
 	}
