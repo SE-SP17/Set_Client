@@ -296,6 +296,11 @@ public class GameFrame extends JFrame {
 				System.out.println("set detected: " + msg);
 				mp.addMessage(msg);
 			}
+			// Player sent a message
+			else if(msg.startsWith("From ")){
+				System.out.println(msg);
+				mp.addMessage(msg.substring(5));
+			}
 			else{
 				System.out.println("else: "+msg);
 				if(msg.length() > 0){

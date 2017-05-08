@@ -77,6 +77,10 @@ public class Listener implements Runnable {
 				else if(m.startsWith("Player") && m.endsWith(")")){
 					messages.add(m);
 				}
+				// Player sent a message
+				else if(m.startsWith("From ")){
+					messages.add(m);
+				}
 				else{
 					lines.add(m);
 				}
