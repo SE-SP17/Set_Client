@@ -31,7 +31,7 @@ public class LoginFrame extends JFrame {
 		SpringLayout layout = new SpringLayout();
 		contentPane.setLayout(layout);
 		
-		JLabel logo = new JLabel(new ImageIcon("res/logo.png"));
+		JLabel logo = new JLabel(new ImageIcon(this.getClass().getResource("/res/logo.png")));
 		logo.setPreferredSize(new Dimension(215, 108));
 		contentPane.add(logo, BorderLayout.CENTER);
 		layout.putConstraint(SpringLayout.NORTH, logo, 5, SpringLayout.NORTH, contentPane);

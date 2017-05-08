@@ -36,7 +36,7 @@ public class LobbyFrame extends JFrame {
 		panel.setLayout(layout);
 		GridBagConstraints c = new GridBagConstraints();
 
-		JLabel logo = new JLabel(new ImageIcon("res/logo.png"));
+		JLabel logo = new JLabel(new ImageIcon(this.getClass().getResource("/res/logo.png")));
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 3;

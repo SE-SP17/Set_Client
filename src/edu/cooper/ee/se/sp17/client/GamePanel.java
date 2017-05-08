@@ -72,7 +72,7 @@ public class GamePanel extends JPanel {
 						// a+b+c+d +".png"));
 						String type = "" + a + b + c + d;
 						// System.out.println(type);
-						cardImages[a][b][c][d] = new ImageIcon("res/cards/" + type + ".png");
+						cardImages[a][b][c][d] = new ImageIcon(this.getClass().getResource("/res/cards/" + type + ".png"));
 					}
 				}
 			}
