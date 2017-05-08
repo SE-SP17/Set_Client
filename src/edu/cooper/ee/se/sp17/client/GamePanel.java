@@ -63,10 +63,10 @@ public class GamePanel extends JPanel {
 
 	public void loadImages() {
 		System.out.println("loading images");
-		for (int a = 0; a < 4; a++) {
-			for (int b = 0; b < 4; b++) {
-				for (int c = 0; c < 4; c++) {
-					for (int d = 0; d < 4; d++) {
+		for (int a = 1; a < 4; a++) {
+			for (int b = 1; b < 4; b++) {
+				for (int c = 1; c < 4; c++) {
+					for (int d = 1; d < 4; d++) {
 						// cardImages[a][b][c][d] = new
 						// ImageIcon(getClass().getResource("res/cards/" +
 						// a+b+c+d +".png"));
