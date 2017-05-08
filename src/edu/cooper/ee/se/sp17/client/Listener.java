@@ -81,6 +81,17 @@ public class Listener implements Runnable {
 				else if(m.startsWith("From ")){
 					messages.add(m);
 				}
+				// Game ended due to win/out of cards
+				else if(m.startsWith("There was no winner") || m.contains(" Won!")){
+						String msg = "";
+						while(!m.startsWith("--END--")){
+							msg += m+"\n";
+							m = br.readLine();
+						}
+					System.out.println("Listener messsage: " + msg);
+					JOptionPane.showMessageDialog(null, msg);
+					messages.add(msg);
+				}
 				else{
 					lines.add(m);
 				}
