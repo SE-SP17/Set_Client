@@ -25,12 +25,16 @@ public class GameFrame extends JFrame {
 	int gid;
 	JButton btn_leave, btn_start, btn_end;
 	GamePanel gp;
-	JButton btn_nomore, btn_set, btn_refresh;
+	MessagePanel mp;
+	JButton btn_nomore, btn_set;
+	//, btn_refresh;
 	Timer timer;
 
-	public GameFrame(String title, int gid) {
+	public GameFrame(String title, int gameID) {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		gid = gameID;
 
 		Container contentPane = getContentPane();
 		setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -55,8 +59,12 @@ public class GameFrame extends JFrame {
 		p.add(gp);
 
 		// TODO SCORES
-		JLabel lbl_scores = new JLabel("    ");
-		p.add(lbl_scores);
+//		JLabel lbl_scores = new JLabel("    ");
+//		p.add(lbl_scores);
+		
+		mp = new MessagePanel();
+		p.add(mp);
+		
 
 		// bottom menu controls - gameplay
 		JPanel bot_menu = new JPanel(new FlowLayout());
@@ -67,8 +75,8 @@ public class GameFrame extends JFrame {
 		bot_menu.add(btn_set);
 		btn_nomore = new JButton("NOMORE");
 		bot_menu.add(btn_nomore);
-		btn_refresh = new JButton("Refresh");
-		bot_menu.add(btn_refresh);
+//		btn_refresh = new JButton("Refresh");
+//		bot_menu.add(btn_refresh);
 
 		pack();
 		setLocationRelativeTo(null);
@@ -142,20 +150,20 @@ public class GameFrame extends JFrame {
 			}
 		});
 
-		btn_refresh.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-//				SetClient.client.send("BOARD\r\n");
-//				String rply = SetClient.client.recv();
-//				if (!rply.equals("You're not playing a game")) {
-//					// Clear out read buffer
-//					while (!rply.startsWith("--END--")) {
-//						rply = SetClient.client.recv();
-//					}
-//					gp.refresh();
-//				}
-			}
-		});
+//		btn_refresh.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+////				SetClient.client.send("BOARD\r\n");
+////				String rply = SetClient.client.recv();
+////				if (!rply.equals("You're not playing a game")) {
+////					// Clear out read buffer
+////					while (!rply.startsWith("--END--")) {
+////						rply = SetClient.client.recv();
+////					}
+////					gp.refresh();
+////				}
+//			}
+//		});
 
 		btn_set.addActionListener(new ActionListener() {
 			@Override
@@ -228,26 +236,71 @@ public class GameFrame extends JFrame {
 			if( msg.startsWith("Game started") || msg.startsWith("You can't")){
 				
 				System.out.println(msg);
-				
+				mp.addMessage(msg);
 			}
 			// someone called NOMORE
 			else if(msg.endsWith("there are NO MORE sets")){
 				System.out.println(msg);
+				mp.addMessage(msg);
 			}
 			// New player joined the game
 			else if(msg.endsWith("has joined the game")){
-				// GameFrame title
-				
+				// update GameFrame title
+				// Get game name
+				SetClient.client.send("GAMES\r\n");
+				rply = SetClient.client.recv();
+				String name = "";
+				while(!rply.startsWith("--END--")){
+					if(rply.startsWith(String.valueOf(gid))){
+						name = rply;
+					}
+					rply = SetClient.client.recv();
+				}
+				setTitle(name);
 				//show message
 				System.out.println(msg);
+				mp.addMessage(msg);
 				
+			}
+			//Player left the game
+			else if(msg.endsWith("has left the game") && msg.startsWith("Player")){
+				// update GameFrame title
+				// Get game name
+				SetClient.client.send("GAMES\r\n");
+				rply = SetClient.client.recv();
+				String name = "";
+				while(!rply.startsWith("--END--")){
+					if(rply.startsWith(String.valueOf(gid))){
+						name = rply;
+					}
+					rply = SetClient.client.recv();
+				}
+				setTitle(name);
+				System.out.println(msg);
+				mp.addMessage(msg);
+			}
+			// END game or LEAVE if game master leaves
+			else if(msg.startsWith("Game has ended")){
+				System.out.println(msg);
+				timer.cancel();
+				timer.purge();
+
+				JOptionPane.showMessageDialog(gp.getRootPane(), msg);
+
+				SetClient.client.send("WHOAMI\r\n");
+				LobbyFrame l = new LobbyFrame("Set Game Client 0xFF", SetClient.client.recv());
+				close();
 			}
 			// a player called a SET
 			else if(msg.endsWith(")")){
 				System.out.println("set detected: " + msg);
+				mp.addMessage(msg);
 			}
 			else{
 				System.out.println("else: "+msg);
+				if(msg.length() > 0){
+					mp.addMessage("else:"+msg);
+				}
 			}
 			
 			

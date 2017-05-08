@@ -46,6 +46,10 @@ public class Listener implements Runnable {
 					messages.add(m);
 					
 				}
+				//Player left the game
+				else if(m.endsWith("has left the game")){
+					messages.add(m);
+				}
 				// END
 				else if(m.endsWith("ended the game")){ 
 					String msg = "";
@@ -55,11 +59,12 @@ public class Listener implements Runnable {
 						}
 					System.out.println("Listener messsage: " + msg);
 					JOptionPane.showMessageDialog(null, msg);
-					messages.add(m);
+					messages.add(msg);
 				}
-				// END or LEAVE if only player
+				// END or LEAVE if game master leaves
 				else if(m.startsWith("Game has ended")){
 					String msg = "";
+					m = br.readLine();
 					while(!m.startsWith("--END--")){
 						msg += m+"\n";
 						m = br.readLine();

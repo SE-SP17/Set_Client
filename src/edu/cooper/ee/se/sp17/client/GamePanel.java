@@ -27,6 +27,7 @@ import javax.swing.plaf.metal.MetalToggleButtonUI;
 public class GamePanel extends JPanel {
 	private ArrayList<JToggleButton> cardButtons;
 	private ArrayList<String> cards;
+	String allCards;
 	private ImageIcon[][][][] cardImages;
 	int rows, cols, numCards;
 	int selected = 0;
@@ -39,6 +40,7 @@ public class GamePanel extends JPanel {
 		rows = 3;
 		cols = 4;
 		numCards = rows * cols;
+		allCards = "";
 
 		this.setPreferredSize(new Dimension(1000, 800));
 		this.setBackground(Color.GRAY);
@@ -185,24 +187,28 @@ public class GamePanel extends JPanel {
 	public void refresh(String board) {
 		setEnabled(true);
 		
-		// update cards
-		updateCards(board);
-
-		System.out.println("number of cards " + cards.size());
-
-		// add buttons if there are more than the previous number of cards
-		if (cards.size() > numCards) {
-			addCardButtons();
+		// update cards if the board has changed
+		if(!board.equals(allCards)){
+			allCards = board;
+			// add new cards to arraylist
+			updateCards(board);
+	
+			System.out.println("number of cards " + cards.size());
+	
+			// add buttons if there are more than the previous number of cards
+			if (cards.size() > numCards) {
+				addCardButtons();
+			}
+			// remove buttons if there are less than 12 cards
+			else if (cards.size() < numCards) {
+				removeCardButtons();
+				this.revalidate();
+				this.repaint();
+			}
+			numCards = cards.size();
+	
+			updateImages();
 		}
-		// remove buttons if there are less than 12 cards
-		else if (cards.size() < numCards) {
-			removeCardButtons();
-			this.revalidate();
-			this.repaint();
-		}
-		numCards = cards.size();
-
-		updateImages();
 
 	}
 

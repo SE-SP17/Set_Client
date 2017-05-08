@@ -21,7 +21,7 @@ public class LobbyFrame extends JFrame {
 	JButton btn_logout, btn_create, btn_refresh;
 	GameListPane glp;
 
-	public LobbyFrame(String title, String msg){
+	public LobbyFrame(String title, String msg) {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -52,7 +52,7 @@ public class LobbyFrame extends JFrame {
 		layout.setConstraints(lbl_welcome, c);
 		panel.add(lbl_welcome);
 
-		btn_logout =  new JButton("Logout");
+		btn_logout = new JButton("Logout");
 		c.gridx = 3;
 		c.gridy = 1;
 		c.gridwidth = 1;
@@ -72,7 +72,7 @@ public class LobbyFrame extends JFrame {
 		glp.refresh();
 		out.add(glp);
 
-		btn_create =  new JButton("Create");
+		btn_create = new JButton("Create");
 		c.gridx = 0;
 		c.gridy = 12;
 		c.gridwidth = 1;
@@ -80,7 +80,7 @@ public class LobbyFrame extends JFrame {
 		layout.setConstraints(btn_create, c);
 		panel.add(btn_create);
 
-		btn_refresh =  new JButton("Refresh");
+		btn_refresh = new JButton("Refresh");
 		c.gridx = 3;
 		c.gridy = 12;
 		layout.setConstraints(btn_refresh, c);
@@ -92,7 +92,7 @@ public class LobbyFrame extends JFrame {
 		setVisible(true);
 
 		// Attach listeners
-		btn_logout.addActionListener(new ActionListener(){
+		btn_logout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SetClient.client.send("LOGOUT\r\n");
@@ -102,7 +102,7 @@ public class LobbyFrame extends JFrame {
 			}
 		});
 
-		btn_refresh.addActionListener(new ActionListener(){
+		btn_refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				glp.refresh();
@@ -110,47 +110,60 @@ public class LobbyFrame extends JFrame {
 			}
 		});
 
-		btn_create.addActionListener(new ActionListener(){
+		btn_create.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String str_max = JOptionPane.showInputDialog("Max users:");
-				if(str_max == null || str_max.equals("")) return;
-				
-				int max = Integer.parseInt(str_max);
+//				 if(str_max == null || str_max.equals("")) return;
+
+//				int max = Integer.parseInt(str_max);
+				Integer max = tryParse(str_max);
+				if(max == null){ 
+					JOptionPane.showMessageDialog(null,"Please enter an integer");
+					return;
+				}
 				SetClient.client.send(String.join(" ", "CREATE", str_max, "\r\n"));
-				
+
 				// Get gid
 				String rply = SetClient.client.recv();
 				JOptionPane.showMessageDialog(contentPane, rply);
 				int gid = Integer.parseInt(rply.substring(20));
-				
+
 				// Get game name
 				SetClient.client.send("GAMES\r\n");
 				rply = SetClient.client.recv();
 				String name = "";
-				while(!rply.startsWith("--END--")){
-					if(rply.startsWith(String.valueOf(gid))){
+				while (!rply.startsWith("--END--")) {
+					if (rply.startsWith(String.valueOf(gid))) {
 						name = rply;
 					}
 					rply = SetClient.client.recv();
 				}
-				
+
 				GameFrame game = new GameFrame(name, gid);
 				close();
 			}
 		});
 	}
 
-	public void close(){
+	public static Integer tryParse(String text) {
+		try {
+			return Integer.parseInt(text);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	public void close() {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	// TODO
-	public void resize(){
-//		pack();
-//		setLocationRelativeTo(null);
-//		setVisible(true);
+	public void resize() {
+		// pack();
+		// setLocationRelativeTo(null);
+		// setVisible(true);
 		revalidate();
 		repaint();
 	}
